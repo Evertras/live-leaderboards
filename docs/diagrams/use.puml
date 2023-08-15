@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+
+actor Player as p
+actor Viewer as v
+
+package App {
+  usecase "Start Round" as UC1
+  usecase "Enter players" as UC1x1
+  usecase "Add Score" as UC2
+  usecase "Modify Score" as UC3
+  usecase "End Round" as UC4
+  usecase "View Finished Round" as UC5
+  usecase "View In-progress Round" as UC6
+  usecase "See live updates" as UC6x1
+  usecase "React to In-progress round" as UC6x2
+
+  UC1 ..> UC1x1 : <<include>>
+
+  UC6 ..> UC6x1 : <<include>>
+  UC6x2 .> UC6 : <<extend>>
+}
+
+p --> UC1
+p --> UC2
+p --> UC3
+p --> UC4
+p --> UC5
+v --> UC5
+v --> UC6
+@enduml
