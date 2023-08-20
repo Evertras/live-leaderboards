@@ -37,7 +37,8 @@ per day.
 
 Because this is a hobby project, we are optimizing for cost. Amazon DynamoDB
 will give us 25 GB of free storage, which means our 753 KB per day of raw data
-would give us about 95 years of free storage.
+would give us about 95 years of free storage. Even with a few extra indices,
+we should be fine.
 
 It also has good integrations with Lambdas, which we'll make use of elsewhere.
 These integrations are also low price or free, which is an additional bonus.
