@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "5.13.1"
     }
   }
 
@@ -17,7 +17,7 @@ terraform {
     dynamodb_table = "evertras-home-terraform-locks"
   }
 
-  required_version = ">= 1.2.0"
+  required_version = ">= 1.5.5"
 }
 
 provider "aws" {
