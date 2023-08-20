@@ -6,3 +6,7 @@ bin
 
 # Node modules from prettier
 node_modules
+
+# Terraform things
+.terraform
+.archives
