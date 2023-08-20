@@ -14,8 +14,9 @@ diagrams: $(DIAGRAM_SVG)
 
 # Format everything
 .PHONY: fmt
-fmt:
+fmt: bin/terraform
 	npx prettier . --write
+	terraform fmt -recursive ./terraform
 
 # Prettier installs node_modules
 node_modules: package.json package-lock.json
