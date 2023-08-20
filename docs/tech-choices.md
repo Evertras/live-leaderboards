@@ -19,13 +19,11 @@ As a ballpark:
 1 hole = player ID, round ID, score, par, length, hole number, putts, sand, and
 a few other fields. For a conservative estimate, this could be 100 bytes of
 data. Multiply by 3 per user per week and 18 holes per round, this would give
-us a total of `540,000 B` or around `527 KB` per week total, or about `75 KB`
+us a total of `5,400,000 B` or around `5.27 MB` per week total, or about `753 KB`
 per day.
 
 ## Database selection
 
 Because this is a hobby project, we are optimizing for cost. Amazon DynamoDB
-will give us 25 GB of free storage, which means our 75 KB per day of raw data
-would give us about 1 million years of free storage. And then maybe we'll pay a
-few extra cents on top of that, or whatever galactic currency is in use at that
-time.
+will give us 25 GB of free storage, which means our 753 KB per day of raw data
+would give us about 95 years of free storage.
