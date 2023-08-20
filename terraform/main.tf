@@ -23,4 +23,10 @@ terraform {
 provider "aws" {
   region  = "ap-northeast-1"
   profile = "admin"
+
+  default_tags {
+    tags = {
+      Deployment = "leaderboards"
+    }
+  }
 }
