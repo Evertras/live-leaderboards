@@ -22,6 +22,7 @@ It also contains:
 | `p`   | list   | The list of player names, in order |
 | `c`   | string | The course name                    |
 | `s`   | string | The start time                     |
+| `h`   | list   | A list of hole data, in order      |
 
 ![Diagram](./diagrams/event_round_start.svg)
 
@@ -38,7 +39,6 @@ It also contains:
 | ----- | ------ | --------------------------- |
 | `h`   | number | Hole number (usually 1-18)  |
 | `pi`  | number | Player index (0 indexed)    |
-| `pa`  | number | Par for the hole            |
 | `sc`  | number | Player's score for the hole |
 
 ![Diagram](./diagrams/event_score.svg)
