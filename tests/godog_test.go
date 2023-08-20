@@ -20,6 +20,3 @@ func TestFeatures(t *testing.T) {
 		t.Fatal("Failed to run feature tests")
 	}
 }
-
-func InitializeScenario(sc *godog.ScenarioContext) {
-}
