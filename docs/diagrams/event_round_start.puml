@@ -1,0 +1,11 @@
+@startyaml
+
+pk: abc-123
+sk: rnd_start
+p:
+  - Evertras (#0)
+  - Nakabonne (#1)
+c: Pebble Beach
+s: 2023-08-20T08:00:00JST
+
+@endyaml
