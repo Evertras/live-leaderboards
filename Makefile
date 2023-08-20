@@ -14,15 +14,21 @@ test-integration:
 
 # Format everything
 .PHONY: fmt
-fmt: bin/terraform node_modules
+fmt: fmt-terraform fmt-prettier
+
+.PHONY: fmt-prettier
+fmt-prettier: node_modules
 	npx prettier . --write
+
+.PHONY: fmt-terraform
+fmt-terraform: bin/terraform
 	terraform fmt -recursive ./terraform
 
-# Make sur Prettier is installed
+# Make sure Prettier is installed
 node_modules: package.json package-lock.json
 	npm install
 
-# Run prettier on pre-commit
+# Run fmt on pre-commit
 .git/hooks/pre-commit: .evertras/pre-commit.sh
 	cp .evertras/pre-commit.sh .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
