@@ -7,7 +7,7 @@ FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
 echo "$FILES" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
 
 # Terraform fmt all selected files
-echo "$FILES" | grep '.terraform' | xargs ./bin/terraform fmt
+echo "$FILES" | grep '.tf' | xargs ./bin/terraform fmt
 
 # Add back the modified/prettified files to staging
 echo "$FILES" | xargs git add
