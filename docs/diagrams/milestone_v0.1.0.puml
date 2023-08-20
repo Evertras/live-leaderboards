@@ -1,0 +1,7 @@
+@startuml
+
+cloud AWS {
+  database DB
+}
+
+@enduml

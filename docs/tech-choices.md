@@ -19,7 +19,7 @@ As a ballpark:
 1 hole = player ID, round ID, score, par, length, hole number, putts, sand, and
 a few other fields. For a conservative estimate, this could be 100 bytes of
 data. Multiply by 3 per user per week and 18 holes per round, this would give
-us a total of `5,400,000 B` or around `527 KB` per week total, or about `75 KB`
+us a total of `540,000 B` or around `527 KB` per week total, or about `75 KB`
 per day.
 
 ## Database selection
