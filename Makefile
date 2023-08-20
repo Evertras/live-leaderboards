@@ -1,24 +1,20 @@
 .PHONY: default
 default: .git/hooks/pre-commit node_modules
-	@# Do nothing
+	@# Just set up prettier as a pre-commit hook
+	@echo Ready!
 
 .PHONY: test-integration
 test-integration:
 	go test -v -race ./tests
 
-DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
-DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
-
-.PHONY: diagrams
-diagrams: $(DIAGRAM_SVG)
-
-# TODO: Better generation that doesn't require global plantuml install
-%.svg: %.puml
-	plantuml -svg $<
+################################################################################
+# Formatting
+#
+# Commands to format stuff to standards
 
 # Format everything
 .PHONY: fmt
-fmt: bin/terraform
+fmt: bin/terraform node_modules
 	npx prettier . --write
 	terraform fmt -recursive ./terraform
 
@@ -30,6 +26,20 @@ node_modules: package.json package-lock.json
 .git/hooks/pre-commit:
 	cp .evertras/pre-commit.sh .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
+
+################################################################################
+# Diagrams
+#
+# Some commands to help with diagram generation in documents
+DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
+DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
+
+.PHONY: diagrams
+diagrams: $(DIAGRAM_SVG)
+
+# TODO: Better generation that doesn't require global plantuml install
+%.svg: %.puml
+	plantuml -svg $<
 
 ################################################################################
 # Local tooling
