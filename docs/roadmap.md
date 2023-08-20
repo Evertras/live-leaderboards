@@ -10,6 +10,9 @@
 Projected technical requirements:
 
 - Create server application
-- Deploy server so that it's accessible publically
+- Create IaC for components listed below
+  - Deploy endpoints so that they're accessible publicly
+- Make viewer endpoint just reconstruct rounds from score data for now
+- Add GHA for deployments, tests, etc.
 
 ![Diagram](./diagrams/milestone_v0.1.0.svg)
