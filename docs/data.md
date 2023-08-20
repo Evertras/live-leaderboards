@@ -24,6 +24,14 @@ It also contains:
 | `s`   | string | The start time                     |
 | `h`   | list   | A list of hole data, in order      |
 
+Hole data includes:
+
+| Field | Type   | Description                                     |
+| ----- | ------ | ----------------------------------------------- |
+| `p`   | number | Par                                             |
+| `si`  | number | Stroke index of the hole                        |
+| `d`   | number | Distance \*(TODO: different tees in the future) |
+
 ![Diagram](./diagrams/event_round_start.svg)
 
 ## Score events
