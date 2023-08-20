@@ -52,7 +52,7 @@ It also contains:
 | Field | Type   | Description                 |
 | ----- | ------ | --------------------------- |
 | `h`   | number | Hole number (usually 1-18)  |
-| `pi`  | number | Player index (0 indexed)    |
-| `sc`  | number | Player's score for the hole |
+| `i`   | number | Player index (0 indexed)    |
+| `s`   | number | Player's score for the hole |
 
 ![Diagram](./diagrams/event_score.svg)
