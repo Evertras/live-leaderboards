@@ -1,7 +1,26 @@
 @startuml
 
-cloud AWS {
-  database DB
+folder Users {
+  actor Player as player
+  actor Viewer as viewer
 }
+
+cloud AWS {
+  folder Lambda {
+    agent Entry as entry
+    agent View as view
+  }
+
+  folder DynamoDB {
+    queue "Score\nEvents" as scoreEvents
+  }
+
+  entry --> scoreEvents
+
+  scoreEvents --> view
+}
+
+player -> entry
+view --> viewer
 
 @enduml
