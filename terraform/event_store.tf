@@ -11,7 +11,7 @@ resource "aws_dynamodb_table" "events" {
 
   attribute {
     name = "pk"
-    type = "S"
+   type = "S"
   }
 
   attribute {
