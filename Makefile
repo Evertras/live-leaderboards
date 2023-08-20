@@ -2,6 +2,10 @@
 default: .git/hooks/pre-commit node_modules
 	@# Do nothing
 
+.PHONY: test-integration
+test-integration:
+	go test -v -race ./tests
+
 DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
 DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
 
