@@ -24,6 +24,12 @@ It also contains:
 | `s`   | string | The start time                     |
 | `h`   | list   | A list of hole data, in order      |
 
+Player data includes:
+
+| Field | Type   | Description |
+| ----- | ------ | ----------- |
+| `n`   | string | Player name |
+
 Hole data includes:
 
 | Field | Type   | Description                                     |
