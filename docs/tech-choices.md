@@ -7,6 +7,12 @@ the idea of sending in scores lends itself well to the idea. We can take in the
 raw data of scores and generate various views and other data points off of them,
 and enable real-time viewing more easily in particular.
 
+## Cloud tech
+
+Going with AWS because I already have an account, I'm familiar with it, and it's
+the gold standard. The free tiers of things should be plenty for us to work
+with as well.
+
 ## Assumptions
 
 Suppose 1000 users. Each user plays 1 round of golf per week, with 3 average
