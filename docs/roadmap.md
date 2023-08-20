@@ -11,3 +11,5 @@ Projected technical requirements:
 
 - Create server application
 - Deploy server so that it's accessible publically
+
+![Diagram](./diagrams/milestone_v0.1.0.svg)
