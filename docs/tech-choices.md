@@ -41,3 +41,10 @@ would give us about 95 years of free storage.
 
 It also has good integrations with Lambdas, which we'll make use of elsewhere.
 These integrations are also low price or free, which is an additional bonus.
+
+## Lambdas
+
+Generally we'll use lambdas for both data processing and for serving up
+information. This allows us to scale very low as a hobby project essentially
+for free, and Lambdas have good integrations with DynamoDB for triggering data
+processing that we might want to do in the future.
