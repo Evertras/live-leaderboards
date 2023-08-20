@@ -18,7 +18,7 @@ fmt: bin/terraform node_modules
 	npx prettier . --write
 	terraform fmt -recursive ./terraform
 
-# Prettier installs node_modules
+# Make sur Prettier is installed
 node_modules: package.json package-lock.json
 	npm install
 
