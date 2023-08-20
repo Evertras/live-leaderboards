@@ -26,7 +26,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Deployment = "leaderboards"
+      Deployment = "${local.prefix}-leaderboards"
     }
   }
 }
