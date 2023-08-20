@@ -1,0 +1,25 @@
+{
+  "name": "quickview",
+  "version": "1.0.0",
+  "description": "A simple quick hot-reloading image viewer in the browser.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Evertras/quickview.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Evertras/quickview/issues"
+  },
+  "homepage": "https://github.com/Evertras/quickview#readme",
+  "devDependencies": {
+    "prettier": "3.0.2"
+  }
+}

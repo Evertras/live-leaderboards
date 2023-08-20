@@ -1,0 +1,8 @@
+# Local env vars with direnv
+.envrc
+
+# Built binaries
+bin
+
+# Node modules from prettier
+node_modules
