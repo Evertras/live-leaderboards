@@ -44,6 +44,12 @@ paths:
       tags:
         - round
       description: Gets current round information
+      parameters:
+        - name: roundID
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Round retrieved successfully
@@ -198,6 +204,7 @@ components:
         tees:
           maxLength: 20
           type: string
+          x-go-type-skip-optional-parameter: true
           examples:
             - White
         holes:
@@ -227,11 +234,14 @@ components:
         $ref: "#/components/schemas/PlayerData"
     RoundID:
       type: string
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
       examples:
         - "7F4EF598-1F47-4E01-8408-EDDC71FE53E9"
     RoundTitle:
-      maxLength: 50
       type: string
+      maxLength: 50
       examples:
         - Super Showdown
     RoundRequest:

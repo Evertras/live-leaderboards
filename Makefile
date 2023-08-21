@@ -1,8 +1,16 @@
 .PHONY: default
-default: .git/hooks/pre-commit node_modules
+default: .git/hooks/pre-commit node_modules ./pkg/api/api.go
 	@# Just set up prettier as a pre-commit hook
 	@echo Ready!
 
+################################################################################
+# Generated code
+./pkg/api/api.go: specs/openapi.yaml bin/oapi-codegen
+	@mkdir -p pkg/api
+	./bin/oapi-codegen -package api specs/openapi.yaml > pkg/api/api.go
+
+################################################################################
+# Testing
 .PHONY: test-integration
 test-integration:
 	go test -v -race ./tests
@@ -78,3 +86,6 @@ bin/terraform:
 	curl -Lo bin/terraform.zip https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS_URL)_amd64.zip
 	cd bin && unzip terraform.zip
 	rm bin/terraform.zip
+
+bin/oapi-codegen:
+	GOBIN=$(shell pwd)/bin go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.13.4
