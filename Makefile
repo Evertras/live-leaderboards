@@ -47,6 +47,16 @@ diagrams: $(DIAGRAM_SVG)
 %.svg: %.puml
 	plantuml -svg $<
 
+
+################################################################################
+# Swagger for API specs
+#
+# Runs Swagger to view our API spec
+.PHONY: swagger
+swagger:
+	@echo "Hosting at http://localhost:8080"
+	docker run -p 8080:8080 -e SWAGGER_JSON=/data/openapi.yaml -v ./specs/:/data/ swaggerapi/swagger-ui
+
 ################################################################################
 # Local tooling
 #

@@ -1,0 +1,203 @@
+openapi: 3.1.0
+info:
+  title: Live Leaderboards
+  summary: Send scores and see live updates of your friends playing golf.
+  version: 0.1.0
+
+  servers:
+    - url: http://localhost:8417
+      description: Local server
+
+paths:
+  /round:
+    post:
+      tags:
+        - round
+      description: Creates a new round
+      requestBody:
+        description: Round information
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/RoundRequest"
+            examples:
+              simple:
+                $ref: "#/components/examples/RoundPebble"
+      responses:
+        "200":
+          description: Round created successfully
+          content:
+            application/json:
+              examples:
+                success:
+                  summary: "Success"
+                  value:
+                    id: 43187519-9C19-49CB-91BE-C4231178CEB9
+              schema:
+                $ref: "#/components/schemas/CreatedRound"
+
+components:
+  examples:
+    RoundPebble:
+      summary: Pebble Beach
+      value:
+        title: Super Pebble Showdown
+        course:
+          name: Pebble Beach
+          tees: White
+          holes:
+            - hole: 1
+              par: 4
+              distance: 337
+              strokeIndex: 6
+            - hole: 2
+              par: 5
+              distance: 458
+              strokeIndex: 10
+            - hole: 3
+              par: 4
+              distance: 340
+              strokeIndex: 12
+            - hole: 4
+              par: 4
+              distance: 290
+              strokeIndex: 16
+            - hole: 5
+              par: 3
+              distance: 134
+              strokeIndex: 14
+            - hole: 6
+              par: 5
+              distance: 465
+              strokeIndex: 2
+            - hole: 7
+              par: 3
+              distance: 94
+              strokeIndex: 18
+            - hole: 8
+              par: 4
+              distance: 364
+              strokeIndex: 4
+            - hole: 9
+              par: 4
+              distance: 436
+              strokeIndex: 8
+            - hole: 10
+              par: 4
+              distance: 408
+              strokeIndex: 3
+            - hole: 11
+              par: 4
+              distance: 338
+              strokeIndex: 9
+            - hole: 12
+              par: 3
+              distance: 176
+              strokeIndex: 17
+            - hole: 13
+              par: 4
+              distance: 370
+              strokeIndex: 7
+            - hole: 14
+              par: 5
+              distance: 490
+              strokeIndex: 1
+            - hole: 15
+              par: 4
+              distance: 338
+              strokeIndex: 13
+            - hole: 16
+              par: 4
+              distance: 368
+              strokeIndex: 11
+            - hole: 17
+              par: 4
+              distance: 166
+              strokeIndex: 15
+            - hole: 18
+              par: 5
+              distance: 506
+              strokeIndex: 5
+        players:
+          - name: Evertras
+          - name: John Rahm
+          - name: 松山英樹
+          - name: John Daly
+  schemas:
+    Hole:
+      type: object
+      required:
+        - hole
+        - par
+      properties:
+        hole:
+          type: integer
+          minimum: 1
+          maximum: 18
+        par:
+          type: integer
+          minimum: 3
+          maximum: 5
+        distance:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        strokeIndex:
+          type: integer
+          minimum: 1
+          maximum: 18
+    Course:
+      type: object
+      required:
+        - name
+        - holes
+      properties:
+        name:
+          maxLength: 50
+          type: string
+        tees:
+          maxLength: 20
+          type: string
+        holes:
+          type: array
+          minItems: 1
+          maxItems: 36
+          items:
+            $ref: "#/components/schemas/Hole"
+    Player:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+    RoundRequest:
+      type: object
+      required:
+        - course
+        - players
+      properties:
+        title:
+          type: string
+        course:
+          $ref: "#/components/schemas/Course"
+        players:
+          type: array
+          minItems: 1
+          maxItems: 12
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/Player"
+    CreatedRound:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+tags:
+  - name: round
+    description: Round operations
