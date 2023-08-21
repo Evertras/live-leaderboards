@@ -40,6 +40,16 @@ paths:
       tags:
         - round
       description: Gets current round information
+      responses:
+        "200":
+          description: Round retrieved successfully
+          content:
+            application/json:
+              examples:
+                success:
+                  summary: "Success"
+              schema:
+                $ref: "#/components/schemas/Round"
 
 components:
   examples:
@@ -139,18 +149,34 @@ components:
           type: integer
           minimum: 1
           maximum: 18
+          examples:
+            - 1
+            - 2
+            - 3
         par:
           type: integer
           minimum: 3
           maximum: 5
+          examples:
+            - 3
+            - 4
+            - 5
         distance:
           type: integer
           minimum: 1
           maximum: 1000
+          examples:
+            - 124
+            - 380
+            - 602
         strokeIndex:
           type: integer
           minimum: 1
           maximum: 18
+          examples:
+            - 14
+            - 8
+            - 11
     Course:
       type: object
       required:
@@ -160,9 +186,13 @@ components:
         name:
           maxLength: 50
           type: string
+          examples:
+            - Pebble Beach
         tees:
           maxLength: 20
           type: string
+          examples:
+            - White
         holes:
           type: array
           minItems: 1
@@ -175,6 +205,9 @@ components:
         - name
       properties:
         name:
+          examples:
+            - John Rahm
+            - 松山英樹
           type: string
           minLength: 1
           maxLength: 50
@@ -193,6 +226,8 @@ components:
     RoundTitle:
       maxLength: 50
       type: string
+      examples:
+        - Super Showdown
     RoundRequest:
       type: object
       required:
