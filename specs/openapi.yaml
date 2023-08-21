@@ -254,6 +254,7 @@ components:
         - id
         - title
         - course
+        - players
       properties:
         id:
           $ref: "#/components/schemas/RoundID"
@@ -272,6 +273,9 @@ components:
                     $ref: "#/components/schemas/PlayerScore"
     HoleScore:
       type: object
+      required:
+        - hole
+        - score
       properties:
         hole:
           $ref: "#/components/schemas/HoleNumber"
