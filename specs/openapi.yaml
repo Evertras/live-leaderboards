@@ -24,7 +24,7 @@ paths:
               simple:
                 $ref: "#/components/examples/RoundPebble"
       responses:
-        "200":
+        "201":
           description: Round created successfully
           content:
             application/json:
@@ -35,6 +35,11 @@ paths:
                     id: 43187519-9C19-49CB-91BE-C4231178CEB9
               schema:
                 $ref: "#/components/schemas/CreatedRound"
+  /round/{roundID}:
+    get:
+      tags:
+        - round
+      description: Gets current round information
 
 components:
   examples:
@@ -173,6 +178,21 @@ components:
           type: string
           minLength: 1
           maxLength: 50
+    PlayerGroup:
+      type: array
+      minItems: 1
+      maxItems: 12
+      uniqueItems: true
+      items:
+        $ref: "#/components/schemas/Player"
+    RoundID:
+      readOnly: true
+      type: string
+      examples:
+        - "7F4EF598-1F47-4E01-8408-EDDC71FE53E9"
+    RoundTitle:
+      maxLength: 50
+      type: string
     RoundRequest:
       type: object
       required:
@@ -180,23 +200,31 @@ components:
         - players
       properties:
         title:
-          type: string
+          $ref: "#/components/schemas/RoundTitle"
         course:
           $ref: "#/components/schemas/Course"
         players:
-          type: array
-          minItems: 1
-          maxItems: 12
-          uniqueItems: true
-          items:
-            $ref: "#/components/schemas/Player"
+          $ref: "#/components/schemas/PlayerGroup"
     CreatedRound:
       type: object
       required:
         - id
       properties:
         id:
-          type: string
+          $ref: "#/components/schemas/RoundID"
+    Round:
+      type: object
+      required:
+        - id
+        - title
+        - course
+      properties:
+        id:
+          $ref: "#/components/schemas/RoundID"
+        title:
+          $ref: "#/components/schemas/RoundTitle"
+        course:
+          $ref: "#/components/schemas/Course"
 
 tags:
   - name: round
