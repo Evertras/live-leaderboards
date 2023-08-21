@@ -3,10 +3,13 @@ info:
   title: Live Leaderboards
   summary: Send scores and see live updates of your friends playing golf.
   version: 0.1.0
+  contact:
+    name: Evertras
+    url: https://github.com/Evertras/live-leaderboards
 
-  servers:
-    - url: http://localhost:8417
-      description: Local server
+servers:
+  - url: http://localhost:8417
+    description: Local server
 
 paths:
   /round:
