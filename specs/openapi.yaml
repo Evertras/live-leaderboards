@@ -204,7 +204,6 @@ components:
         tees:
           maxLength: 20
           type: string
-          x-go-type-skip-optional-parameter: true
           examples:
             - White
         holes:

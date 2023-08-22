@@ -1,13 +1,26 @@
 .PHONY: default
-default: .git/hooks/pre-commit node_modules ./pkg/api/api.go
+default: .git/hooks/pre-commit generated bin/terraform
 	@# Just set up prettier as a pre-commit hook
 	@echo Ready!
 
 ################################################################################
-# Generated code
+# Generated stuff
+.PHONY: generated
+generated: ./pkg/api/api.go diagrams
+
 ./pkg/api/api.go: specs/openapi.yaml bin/oapi-codegen
 	@mkdir -p pkg/api
 	./bin/oapi-codegen -package api specs/openapi.yaml > pkg/api/api.go
+
+DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
+DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
+
+.PHONY: diagrams
+diagrams: $(DIAGRAM_SVG)
+
+# TODO: Better generation that doesn't require global plantuml install
+%.svg: %.puml
+	plantuml -svg $<
 
 ################################################################################
 # Testing
@@ -42,28 +55,16 @@ node_modules: package.json package-lock.json
 	chmod +x .git/hooks/pre-commit
 
 ################################################################################
-# Diagrams
-#
-# Some commands to help with diagram generation in documents
-DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
-DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
-
-.PHONY: diagrams
-diagrams: $(DIAGRAM_SVG)
-
-# TODO: Better generation that doesn't require global plantuml install
-%.svg: %.puml
-	plantuml -svg $<
-
-
-################################################################################
 # Swagger for API specs
 #
 # Runs Swagger to view our API spec
 .PHONY: swagger
 swagger:
 	@echo "Hosting at http://localhost:8080"
-	docker run -p 8080:8080 -e SWAGGER_JSON=/data/openapi.yaml -v ./specs/:/data/ swaggerapi/swagger-ui
+	docker run -p 8080:8080 \
+		-e SWAGGER_JSON=/data/openapi.yaml \
+		-v ./specs/:/data/ \
+		swaggerapi/swagger-ui:v5.4.2
 
 ################################################################################
 # Local tooling
