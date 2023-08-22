@@ -24,22 +24,22 @@ import (
 
 // Course defines model for Course.
 type Course struct {
-	Holes []Hole  `json:"holes"`
-	Name  string  `json:"name"`
-	Tees  *string `json:"tees,omitempty"`
+	Holes []Hole  `dynamodbav:"h" json:"holes"`
+	Name  string  `dynamodbav:"n" json:"name"`
+	Tees  *string `dynamodbav:"t" json:"tees,omitempty"`
 }
 
 // CreatedRound defines model for CreatedRound.
 type CreatedRound struct {
-	Id RoundID `json:"id"`
+	Id RoundID `dynamodbav:"id" json:"id"`
 }
 
 // Hole defines model for Hole.
 type Hole struct {
-	Distance    *int       `json:"distance,omitempty"`
-	Hole        HoleNumber `json:"hole"`
-	Par         int        `json:"par"`
-	StrokeIndex *int       `json:"strokeIndex,omitempty"`
+	DistanceYards *int       `dynamodbav:"d" json:"distanceYards,omitempty"`
+	Hole          HoleNumber `dynamodbav:"n" json:"hole"`
+	Par           int        `dynamodbav:"p" json:"par"`
+	StrokeIndex   *int       `dynamodbav:"si" json:"strokeIndex,omitempty"`
 }
 
 // HoleNumber defines model for HoleNumber.
@@ -47,13 +47,13 @@ type HoleNumber = int
 
 // HoleScore defines model for HoleScore.
 type HoleScore struct {
-	Hole  HoleNumber `json:"hole"`
-	Score int        `json:"score"`
+	Hole  HoleNumber `dynamodbav:"n" json:"hole"`
+	Score int        `dynamodbav:"s" json:"score"`
 }
 
 // PlayerData defines model for PlayerData.
 type PlayerData struct {
-	Name string `json:"name"`
+	Name string `dynamodbav:"n" json:"name"`
 }
 
 // PlayerGroup defines model for PlayerGroup.
@@ -64,10 +64,10 @@ type PlayerScore = []HoleScore
 
 // Round defines model for Round.
 type Round struct {
-	Course  Course       `json:"course"`
-	Id      RoundID      `json:"id"`
-	Players RoundPlayers `json:"players"`
-	Title   RoundTitle   `json:"title"`
+	Course  Course       `dynamodbav:"c" json:"course"`
+	Id      RoundID      `dynamodbav:"id" json:"id"`
+	Players RoundPlayers `dynamodbav:"rp" json:"players"`
+	Title   RoundTitle   `dynamodbav:"t" json:"title"`
 }
 
 // RoundID defines model for RoundID.
@@ -75,8 +75,8 @@ type RoundID = uuid.UUID
 
 // RoundPlayerData defines model for RoundPlayerData.
 type RoundPlayerData struct {
-	Name   string       `json:"name"`
-	Scores *PlayerScore `json:"scores,omitempty"`
+	Name   string       `dynamodbav:"n" json:"name"`
+	Scores *PlayerScore `dynamodbav:"ps" json:"scores,omitempty"`
 }
 
 // RoundPlayers defines model for RoundPlayers.
@@ -84,9 +84,9 @@ type RoundPlayers = []RoundPlayerData
 
 // RoundRequest defines model for RoundRequest.
 type RoundRequest struct {
-	Course  Course      `json:"course"`
-	Players PlayerGroup `json:"players"`
-	Title   *RoundTitle `json:"title,omitempty"`
+	Course  Course      `dynamodbav:"c" json:"course"`
+	Players PlayerGroup `dynamodbav:"pg" json:"players"`
+	Title   *RoundTitle `dynamodbav:"t" json:"title,omitempty"`
 }
 
 // RoundTitle defines model for RoundTitle.
@@ -537,30 +537,31 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/6xYy3LbNhd+FQ7+fwmZhEhdl5bl1B1P67GT6SLjBUweSUhJggFAxxoPn6DP0H23WXbT",
-	"t2mmj9EBwLvEWG6yo0B85zuX7xyAekYhTzKeQqokWj4jeKJJFoN5vuV5Gt3Aw0MM+qfMk4SKPVoiu+ac",
-	"Aw13CKNHGudmR8hzIc3Tjhsb759RxKSiaQho6fszbF6gJcEoowItA4ykEvxXuEojeELLaYHbiGAyrxDj",
-	"EjHpIYjXhfiBV0H8ARIy7kLGixoSDEF6jhE/qCCTEuL3IUEvlumkgkwHYun5tag5ZkMc817w0xoyH4ik",
-	"75U/rRCLAUSPI/DqmhBvAOL33PIbyFDlF70Ez2q/yHgo+lmPZlbXkQzVvgcJmtKTYEhhw8FMhuTST8C0",
-	"wUyHMD0eMm0yMBvCTLqYiddg5gPhTIp7jFKawGEfK9A9i37ZMQWowCiL6R6EbeMSsX4EoQSVSBOXaz/y",
-	"Xerc0l3SXvzy+19/f/78z2+fv/zx58HmCxrvkfZDMaWdRXd5BsIp3bnb8U8R/5SioigwkuEOEmrm0aoe",
-	"L5ngGQjF7Jwqh80zYgoS8/B/ARu0RP9zm+HmlobcH3R+CowS+nRl9+seSFha/iIYqX2mvaJC0L3ean1v",
-	"D8f33dzdG3PXkG7VTpehNiGVYOlW27DJ7dqwme6Cx4fgAiMBH3MmINIo4w0uo76vd/OHDxAqTbUSQBVE",
-	"ZnwfZotFL2XIAK8uDohZdJTOJPSAplFlJ2YyDrA/9/DUG9u4WZInepR4nilC+bOmYamCLQjNsyt5Xiru",
-	"T3nyYBGmATr0Pg7wpE08abH6x1g7zdMNJcBzTEgnjPnXg+gl1ERk3RxKbBlMjxmPsd/mLRX8leRpW3ch",
-	"FwPt87q8yspQy6eg44/3X/JgzR7LxI2ZRBdU0UP3jzVnM5JwdxIdNmrC0uonOanzhv17I3ienTyHWjF1",
-	"ppE+74anEUZ5yj7mUL5WIoeav67vyXPQIl43DAfGSnP3+xppOcIL/Jox1DqJTkDclHuL+ng5AfTW7Dwy",
-	"8CojuAqwceaYECqfe3qcXQbry8liPiKXwWwUrD0ymgfefLS+uFjNyOV64q8XLXul/DB6Gm35qFzMcxad",
-	"vXt3ddFeH7Ek40KZclCtYbRlapc/nIU8cbecb2NwNdCE1kpP1Uo0jn/emAP+ZKn2C2+69kS1l3orDjI3",
-	"mMubpvInqbof4ze3ljF4Cx9zkOrbVX+ikNvz5Dvo+HTpvq2Y2uq1t7P6WvbiZUfTs3TDbYJSRUPVDOrm",
-	"ColRLmK0RDulMrl03ZZyqz1uzB5hFAONQDxwKiLT1s2H6B2kkWMF6FD9COBoiJNnEVUgHb5x9jwXzkYw",
-	"SCPp6ASwdOtsebw5Q80F9FqDrts8GD2CkIynaIm8M3LmaWaeQUozhpbIN0vYdJ0ppyvqucitUiKQoWCZ",
-	"sjbspUw61Enhk2M3G4OC6h1Xkb6Pc6luyzfCSu6cR/sqj5AauzTLYhYalPtBauPdz3bJ9OOQXKqdbvvr",
-	"vrlon6Syqh1MpbthmveOrr5IjIvIaFFmPJXWvbFHXhtQHoYgZfc/iLtysfX3gz5SUOCT+WxCFqPFiixG",
-	"wWJ1PlqQ8/VoFYx9Qmbz1fp80f6yeLF325fpwYBDu8spXd3ksf7C0a1Lt6aHbMHv9ZJVivss7FlRaA+2",
-	"cEQyb0BJJ8yFgFRZxXQS21fPG7Diqc4gc7GkCajqG45po+aYqL8ARb23mRd68LWz0+/u+4OCet+zoK/U",
-	"4nBNBCjB4PGkqmhOEI9VprrmrnlIY8e+70ytpevG+t2OS7WcB2RmDzJr/PmoU3XJZK8IqLgv/g0AAP//",
-	"ZvPENY0TAAA=",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

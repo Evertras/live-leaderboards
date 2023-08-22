@@ -23,10 +23,10 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 	r.Course = api.Course{
 		Holes: []api.Hole{
 			{
-				Distance:    ptr(330),
-				Hole:        1,
-				Par:         4,
-				StrokeIndex: ptr(16),
+				DistanceYards: ptr(330),
+				Hole:          1,
+				Par:           4,
+				StrokeIndex:   ptr(16),
 			},
 		},
 		Name: "Pebble Beach",

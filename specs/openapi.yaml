@@ -151,6 +151,8 @@ components:
 
   schemas:
     HoleNumber:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "n"
       type: integer
       minimum: 1
       maximum: 36
@@ -167,6 +169,8 @@ components:
         hole:
           $ref: "#/components/schemas/HoleNumber"
         par:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "p"
           type: integer
           minimum: 3
           maximum: 5
@@ -174,7 +178,9 @@ components:
             - 3
             - 4
             - 5
-        distance:
+        distanceYards:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "d"
           type: integer
           minimum: 1
           maximum: 1000
@@ -183,6 +189,8 @@ components:
             - 380
             - 602
         strokeIndex:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "si"
           type: integer
           minimum: 1
           maximum: 18
@@ -191,33 +199,45 @@ components:
             - 8
             - 11
     Course:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "c"
       type: object
       required:
         - name
         - holes
       properties:
         name:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "n"
           maxLength: 50
           type: string
           examples:
             - Pebble Beach
         tees:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "t"
           maxLength: 20
           type: string
           examples:
             - White
         holes:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "h"
           type: array
           minItems: 1
           maxItems: 36
           items:
             $ref: "#/components/schemas/Hole"
     PlayerData:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "pd"
       type: object
       required:
         - name
       properties:
         name:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "n"
           examples:
             - John Rahm
             - 松山英樹
@@ -225,6 +245,8 @@ components:
           minLength: 1
           maxLength: 50
     PlayerGroup:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "pg"
       type: array
       minItems: 1
       maxItems: 12
@@ -232,6 +254,8 @@ components:
       items:
         $ref: "#/components/schemas/PlayerData"
     RoundPlayerData:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "rpd"
       type: object
       allOf:
         - $ref: "#/components/schemas/PlayerData"
@@ -240,6 +264,8 @@ components:
             scores:
               $ref: "#/components/schemas/PlayerScore"
     RoundPlayers:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "rp"
       type: array
       minItems: 1
       maxItems: 12
@@ -248,17 +274,23 @@ components:
         $ref: "#/components/schemas/RoundPlayerData"
     RoundID:
       type: string
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "id"
       x-go-type: uuid.UUID
       x-go-type-import:
         path: github.com/google/uuid
       examples:
         - "7F4EF598-1F47-4E01-8408-EDDC71FE53E9"
     RoundTitle:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "t"
       type: string
       maxLength: 50
       examples:
         - Super Showdown
     RoundRequest:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "req"
       type: object
       required:
         - course
@@ -294,6 +326,8 @@ components:
         players:
           $ref: "#/components/schemas/RoundPlayers"
     HoleScore:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "hs"
       type: object
       required:
         - hole
@@ -302,12 +336,16 @@ components:
         hole:
           $ref: "#/components/schemas/HoleNumber"
         score:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "s"
           type: integer
           minimum: 1
           maximum: 30
           examples:
             - 4
     PlayerScore:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "ps"
       type: array
       minItems: 1
       maxItems: 36
