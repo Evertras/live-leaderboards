@@ -231,6 +231,21 @@ components:
       uniqueItems: true
       items:
         $ref: "#/components/schemas/PlayerData"
+    RoundPlayerData:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PlayerData"
+        - type: object
+          properties:
+            scores:
+              $ref: "#/components/schemas/PlayerScore"
+    RoundPlayers:
+      type: array
+      minItems: 1
+      maxItems: 12
+      uniqueItems: true
+      items:
+        $ref: "#/components/schemas/RoundPlayerData"
     RoundID:
       type: string
       x-go-type: uuid.UUID
@@ -277,14 +292,7 @@ components:
         course:
           $ref: "#/components/schemas/Course"
         players:
-          type: array
-          items:
-            allOf:
-              - $ref: "#/components/schemas/PlayerData"
-              - type: object
-                properties:
-                  scores:
-                    $ref: "#/components/schemas/PlayerScore"
+          $ref: "#/components/schemas/RoundPlayers"
     HoleScore:
       type: object
       required:

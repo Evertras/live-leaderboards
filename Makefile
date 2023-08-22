@@ -24,6 +24,9 @@ diagrams: $(DIAGRAM_SVG)
 
 ################################################################################
 # Testing
+test: ./pkg/api/api.go
+	go test -race ./pkg/...
+
 .PHONY: test-integration
 test-integration:
 	go test -v -race ./tests
