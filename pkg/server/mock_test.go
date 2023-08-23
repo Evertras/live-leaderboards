@@ -30,6 +30,12 @@ func (r *mockRoundRepo) CreateEventRoundStart(ctx context.Context, roundID uuid.
 	r.Lock()
 	defer r.Unlock()
 
+	r.createdEvents[roundID.String()] = &repo.EventRoundStart{
+		RoundID:      roundID.String(),
+		SortKey:      "rnd_start",
+		RoundRequest: req,
+	}
+
 	return nil
 }
 

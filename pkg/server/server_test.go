@@ -2,6 +2,7 @@ package server_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http/httptest"
 	"testing"
@@ -66,4 +67,11 @@ func TestServerPostRound(t *testing.T) {
 
 	assert.NoError(t, err, "Failed to unmarshal created round")
 	assert.NotEmpty(t, created.Id.String())
+
+	internalRound, err := repo.GetEventRoundStart(context.Background(), created.Id)
+
+	assert.NoError(t, err, "Couldn't get round start event from internal repo")
+
+	assert.NotNil(t, internalRound.Title, "Title wasn't saved properly")
+	assert.Equal(t, "Test Round", *internalRound.Title)
 }
