@@ -3,9 +3,12 @@ module github.com/Evertras/live-leaderboards
 go 1.20
 
 require (
+	github.com/aws/aws-lambda-go v1.41.0
+	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.36
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.39
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.5
+	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/cucumber/godog v0.12.6
 	github.com/deepmap/oapi-codegen v1.13.4
 	github.com/getkin/kin-openapi v0.118.0
@@ -13,6 +16,7 @@ require (
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/labstack/gommon v0.4.0
 	github.com/ory/dockertest v3.3.5+incompatible
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
@@ -20,7 +24,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.35 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.41 // indirect
@@ -41,6 +44,7 @@ require (
 	github.com/containerd/continuity v0.4.1 // indirect
 	github.com/cucumber/gherkin-go/v19 v19.0.3 // indirect
 	github.com/cucumber/messages-go/v16 v16.0.1 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -76,6 +80,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

@@ -1,24 +1,30 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/Evertras/live-leaderboards/pkg/api"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
-type Server struct {
-	addr string
-	e    *echo.Echo
+type Repo interface {
+	RoundRepo
 }
 
-func New(addr string) *Server {
+type Server struct {
+	e *echo.Echo
+	r Repo
+}
+
+func New(r Repo) *Server {
 	e := echo.New()
 
 	e.Logger.SetLevel(log.INFO)
 
 	s := &Server{
-		addr: addr,
-		e:    e,
+		e: e,
+		r: r,
 	}
 
 	api.RegisterHandlers(e, s)
@@ -26,6 +32,10 @@ func New(addr string) *Server {
 	return s
 }
 
-func (s *Server) ListenAndServe() error {
-	return s.e.Start(s.addr)
+func (s *Server) ListenAndServe(addr string) error {
+	return s.e.Start(addr)
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.e.ServeHTTP(w, r)
 }
