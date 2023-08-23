@@ -12,11 +12,8 @@ import (
 	"github.com/Evertras/live-leaderboards/pkg/server"
 )
 
-func TestServerPostRound(t *testing.T) {
-	repo := newMockRoundRepo()
-	s := server.New(repo)
-
-	round := api.RoundRequest{
+func genTestRound() *api.RoundRequest {
+	return &api.RoundRequest{
 		Course: api.Course{
 			Holes: []api.Hole{
 				{
@@ -36,6 +33,13 @@ func TestServerPostRound(t *testing.T) {
 		},
 		Title: ptr("Test Round"),
 	}
+}
+
+func TestServerPostRound(t *testing.T) {
+	repo := newMockRoundRepo()
+	s := server.New(repo)
+
+	round := genTestRound()
 
 	buf, err := json.Marshal(round)
 
