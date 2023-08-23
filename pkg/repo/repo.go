@@ -13,14 +13,14 @@ type Repo struct {
 	tableName *string
 }
 
-func NewDefault(ctx context.Context, tableName string) (*Repo, error) {
-	cfg, err := config.LoadDefaultConfig(ctx, nil)
+func NewDefault(ctx context.Context, tableName string, opts ...func(o *dynamodb.Options)) (*Repo, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to load default config: %w", err)
 	}
 
-	client := dynamodb.NewFromConfig(cfg)
+	client := dynamodb.NewFromConfig(cfg, opts...)
 
 	return NewWithClient(client, tableName), nil
 }

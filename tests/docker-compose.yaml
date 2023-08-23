@@ -12,11 +12,11 @@ services:
   app-node:
     depends_on:
       - dynamodb-local
-    image: amazon/aws-cli
+    build: ../
     container_name: app-node
     ports:
-      - "8080:8080"
+      - "8037:8037"
     environment:
       AWS_ACCESS_KEY_ID: "DUMMYIDEXAMPLE"
       AWS_SECRET_ACCESS_KEY: "DUMMYEXAMPLEKEY"
-    command: dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2
+      EVERTRAS_LEADERBOARD_TABLE: "leaderboard-store"

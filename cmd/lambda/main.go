@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	server := server.New()
+	server := server.New(repository)
 
 	// Even though we're behind a v2 gateway, we still use the v1 adapter here
 	// as we seem to get the v1 event that contains the path, etc.
