@@ -28,7 +28,7 @@ test: ./pkg/api/api.go
 	go test -race ./pkg/...
 
 .PHONY: test-integration
-test-integration:
+test-integration: ./pkg/api/api.go
 	go test -v -race ./tests
 
 ################################################################################
