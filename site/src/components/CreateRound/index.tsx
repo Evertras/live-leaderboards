@@ -1,19 +1,31 @@
 import React from "react";
 import asiaToride from "../../data/courses/asia-toride-in-west";
+import { Configuration, RoundApi, RoundRequest } from "../../lib/api";
 
 const CreateRound = () => {
   const createRound = async () => {
-    const response = await fetch("http://localhost:8037/round", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify(asiaToride),
-      redirect: "follow",
+    const configuration = new Configuration({
+      // TODO: Config this on build or use
+      // basePath: window.location.origin
+      basePath: "http://localhost:8037",
     });
 
-    return await response.json();
+    const api = new RoundApi(configuration);
+    const req: RoundRequest = {
+      course: asiaToride,
+      players: [
+        {
+          name: "Brandon",
+        },
+        {
+          name: "Ryo",
+        },
+      ],
+    };
+
+    const response = await api.roundPost({ roundRequest: req });
+
+    return response;
   };
 
   const clickCreate = async () => {
