@@ -4,7 +4,6 @@ import asiaToride from "../../data/courses/asia-toride-in-west";
 import { Configuration, RoundApi, RoundRequest } from "../../lib/api";
 
 export async function createAction() {
-  console.log("hi");
   const configuration = new Configuration({
     // TODO: Config this on build or use
     // basePath: window.location.origin
@@ -25,8 +24,6 @@ export async function createAction() {
   };
 
   const response = await api.roundPost({ roundRequest: req });
-
-  console.log("Created round:", response.id);
 
   return redirect(`/round/${response.id}`);
 }
