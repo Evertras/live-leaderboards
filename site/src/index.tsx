@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import CreateRound, { createAction } from "./components/CreateRound";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import App from "./App";
+import CreateRound, { createAction } from "./components/CreateRound";
+import ViewRound from "./views/ViewRound";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +20,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/round/:id",
-        element: <CreateRound />,
+        element: <ViewRound />,
       },
     ],
   },
