@@ -1,5 +1,5 @@
 import React from "react";
-import asiaToride from "../../data/courses/asia-toride-in-west.json";
+import asiaToride from "../../data/courses/asia-toride-in-west";
 
 const CreateRound = () => {
   const createRound = async () => {
