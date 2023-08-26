@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App";
 import CreateRound, { createAction } from "./components/CreateRound";
-import ViewRound from "./views/ViewRound";
+import ViewRound, { loadRound } from "./views/ViewRound";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +21,7 @@ const router = createBrowserRouter([
       {
         path: "/round/:id",
         element: <ViewRound />,
+        loader: loadRound,
       },
     ],
   },
