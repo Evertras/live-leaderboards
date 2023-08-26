@@ -5,6 +5,7 @@ import (
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
 
@@ -21,6 +22,10 @@ func New(r Repo) *Server {
 	e := echo.New()
 
 	e.Logger.SetLevel(log.INFO)
+
+	// TODO: update to pin to our hosts/headers
+	// https://echo.labstack.com/docs/middleware/cors#custom-configuration
+	e.Use(middleware.CORS())
 
 	s := &Server{
 		e: e,
