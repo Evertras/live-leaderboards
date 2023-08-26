@@ -1,16 +1,21 @@
 package tests
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
 )
 
-func (t *testContext) iCreateANewRound() error {
-	//func (c *Client) PostRound(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (t *testContext) iCreateANewRoundWithPlayers(numPlayers int) error {
+	players := make([]api.PlayerData, numPlayers)
+
+	for i := 0; i < numPlayers; i++ {
+		players[i] = api.PlayerData{
+			Name: fmt.Sprintf("Test Player %d", i),
+		}
+	}
+
 	t.roundRequest = &api.RoundRequest{
 		Course: api.Course{
 			Holes: []api.Hole{
@@ -24,36 +29,14 @@ func (t *testContext) iCreateANewRound() error {
 			Name: "Test Round",
 			Tees: ptr("White"),
 		},
-		Players: []api.PlayerData{
-			{
-				Name: "Test Player",
-			},
-		},
-		Title: ptr("Test Round"),
+		Players: players,
+		Title:   ptr("Test Round"),
 	}
 
-	res, err := t.client.PostRound(t.execCtx, *t.roundRequest)
+	createdRound, err := t.client.CreateRound(t.execCtx, *t.roundRequest)
 
 	if err != nil {
-		return fmt.Errorf("t.client.PostRound: %w", err)
-	}
-
-	if res.StatusCode != http.StatusCreated {
-		return fmt.Errorf("unexpected status code: %d, expected %d", res.StatusCode, http.StatusCreated)
-	}
-
-	raw, err := io.ReadAll(res.Body)
-
-	if err != nil {
-		return fmt.Errorf("io.ReadAll: %w", err)
-	}
-
-	var createdRound api.CreatedRound
-
-	err = json.Unmarshal(raw, &createdRound)
-
-	if err != nil {
-		return fmt.Errorf("json.Unmarshal result: %w", err)
+		return fmt.Errorf("failed to create round: %w", err)
 	}
 
 	if createdRound.Id.String() == "" {
@@ -66,37 +49,13 @@ func (t *testContext) iCreateANewRound() error {
 }
 
 func (t *testContext) iViewTheRound() error {
-	id := t.createdRoundID
-
-	response, err := t.client.GetRoundRoundID(t.execCtx, id.String())
+	round, err := t.client.GetRound(t.execCtx, t.createdRoundID)
 
 	if err != nil {
 		return fmt.Errorf("failed to get round: %w", err)
 	}
 
-	defer func() {
-		_ = response.Body.Close()
-	}()
-
-	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", response.StatusCode)
-	}
-
-	raw, err := io.ReadAll(response.Body)
-
-	if err != nil {
-		return fmt.Errorf("failed to read body: %w", err)
-	}
-
-	var round api.Round
-
-	err = json.Unmarshal(raw, &round)
-
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal json: %w", err)
-	}
-
-	t.returnedRound = &round
+	t.returnedRound = round
 
 	return nil
 }
@@ -125,4 +84,54 @@ func (t *testContext) theRoundIsValidButEmpty() error {
 	}
 
 	return nil
+}
+
+func (t *testContext) playerScoresOnHole(playerIndex, score, hole int) error {
+	scoreEvent := api.PlayerScoreEvent{
+		Hole:        hole,
+		PlayerIndex: playerIndex - 1,
+		Score:       score,
+	}
+
+	res, err := t.client.PutRoundRoundIDScore(t.execCtx, t.createdRoundID.String(), scoreEvent)
+
+	if err != nil {
+		return fmt.Errorf("failed to send score: %w", err)
+	}
+
+	if res.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("expected status %d but got %d", http.StatusNoContent, res.StatusCode)
+	}
+
+	return nil
+}
+
+func (t *testContext) theScoreForPlayerOnHoleIs(playerIndex, hole, score int) error {
+	if t.returnedRound == nil {
+		return fmt.Errorf("no round to view")
+	}
+
+	if playerIndex <= 0 {
+		return fmt.Errorf("player index is 1-indexed, but got %d", playerIndex)
+	}
+
+	if len(t.returnedRound.Players) < playerIndex {
+		return fmt.Errorf("wanted to check player index %d but only %d players in round", playerIndex, len(t.returnedRound.Players))
+	}
+
+	player := t.returnedRound.Players[playerIndex-1]
+
+	for _, entry := range player.Scores {
+		if entry.Hole != hole {
+			continue
+		}
+
+		if entry.Score != score {
+			return fmt.Errorf("found score of %d but expected %d", entry.Score, score)
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("did not find player score for hole %d", hole)
 }

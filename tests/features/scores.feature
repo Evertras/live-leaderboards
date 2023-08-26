@@ -4,6 +4,12 @@ Feature: send scores
   I want to send scores from my round hole-by-hole
 
   Scenario: Create a new round and look at it
-    When I create a new round
+    When I create a new round with 2 players
     And I view the round
     Then the round is valid but empty
+
+  Scenario: Create a new round and send some scores
+    When I create a new round with 3 players
+    And player 2 scores a 3 on hole 5
+    And I view the round
+    Then the score for player 2 on hole 5 is 3
