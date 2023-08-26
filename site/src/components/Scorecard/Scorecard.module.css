@@ -1,3 +1,15 @@
 .Scorecard table {
-  border: 1px solid white;
+  border-collapse: collapse;
+  font-size: 1.8vw;
+}
+
+.Scorecard th {
+  border: 2px solid white;
+  padding: 0.5em 0.2em;
+  width: 4vw;
+}
+
+.Scorecard td {
+  border: 2px solid white;
+  padding: 0.5em 0.2em;
 }
