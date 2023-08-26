@@ -1,16 +1,10 @@
 import React from "react";
 import { Form, redirect } from "react-router-dom";
 import asiaToride from "../../data/courses/asia-toride-in-west";
-import { Configuration, RoundApi, RoundRequest } from "../../lib/api";
+import { RoundRequest } from "../../lib/api";
+import { createRound } from "../../lib/client";
 
-export async function createAction() {
-  const configuration = new Configuration({
-    // TODO: Config this on build or use
-    // basePath: window.location.origin
-    basePath: "http://localhost:8037",
-  });
-
-  const api = new RoundApi(configuration);
+export async function createAction(): Promise<Response> {
   const req: RoundRequest = {
     course: asiaToride,
     players: [
@@ -23,9 +17,9 @@ export async function createAction() {
     ],
   };
 
-  const response = await api.roundPost({ roundRequest: req });
+  const id = await createRound(req);
 
-  return redirect(`/round/${response.id}`);
+  return redirect(`/round/${id}`);
 }
 
 const CreateRound = () => {
