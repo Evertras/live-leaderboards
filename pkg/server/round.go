@@ -12,6 +12,7 @@ import (
 type RoundRepo interface {
 	CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req api.RoundRequest) error
 	GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error)
+	SetScore(ctx context.Context, roundID uuid.UUID, scoreData api.PlayerScoreEvent) error
 }
 
 func (s *Server) PostRound(ctx echo.Context) error {
@@ -59,7 +60,7 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	logger.Info(id)
+	logger.Debug(id)
 	round, err := s.r.GetRound(ctx.Request().Context(), id)
 
 	if err != nil {
@@ -75,4 +76,35 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 	}
 
 	return nil
+}
+
+func (s *Server) PutRoundRoundIDScore(ctx echo.Context, roundID string) error {
+	logger := ctx.Logger()
+	logger.Infof("PutRoundRoundIDScore: %s", roundID)
+
+	id, err := uuid.Parse(roundID)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	logger.Debug(id)
+
+	var scoreEvent api.PlayerScoreEvent
+
+	err = ctx.Bind(&scoreEvent)
+
+	if err != nil {
+		ctx.Logger().Errorf("Failed to read body: %v", err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = s.r.SetScore(ctx.Request().Context(), id, scoreEvent)
+
+	if err != nil {
+		logger.Errorf("Failed to set score: %v", err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	return echo.NewHTTPError(http.StatusNoContent)
 }

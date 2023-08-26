@@ -17,6 +17,7 @@ type mockRoundRepo struct {
 
 	createdEvents map[string]*repo.EventRoundStart
 	rounds        map[string]*api.Round
+	scoreEvents   map[string][]api.PlayerScoreEvent
 }
 
 var _ server.Repo = &mockRoundRepo{}
@@ -25,6 +26,7 @@ func newMockRoundRepo() *mockRoundRepo {
 	return &mockRoundRepo{
 		createdEvents: make(map[string]*repo.EventRoundStart),
 		rounds:        make(map[string]*api.Round),
+		scoreEvents:   make(map[string][]api.PlayerScoreEvent),
 	}
 }
 
@@ -42,12 +44,12 @@ func (r *mockRoundRepo) CreateEventRoundStart(ctx context.Context, roundID uuid.
 }
 
 func (r *mockRoundRepo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error) {
-	r.Lock()
-	defer r.Unlock()
-
 	if isZeroUUID(roundID) {
 		return nil, fmt.Errorf("received empty uuid: %s", roundID.String())
 	}
+
+	r.Lock()
+	defer r.Unlock()
 
 	round, exists := r.rounds[roundID.String()]
 
@@ -58,8 +60,17 @@ func (r *mockRoundRepo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.R
 	return round, nil
 }
 
-func ptr[K any](item K) *K {
-	return &item
+func (r *mockRoundRepo) SetScore(ctx context.Context, roundID uuid.UUID, score api.PlayerScoreEvent) error {
+	if isZeroUUID(roundID) {
+		return fmt.Errorf("received empty uuid: %s", roundID.String())
+	}
+
+	r.Lock()
+	defer r.Unlock()
+
+	r.scoreEvents[roundID.String()] = append(r.scoreEvents[roundID.String()], score)
+
+	return nil
 }
 
 func (r *mockRoundRepo) storeRound(round *api.Round) {
@@ -77,7 +88,28 @@ func (r *mockRoundRepo) storeRound(round *api.Round) {
 	r.rounds[round.Id.String()] = round
 }
 
+func (r *mockRoundRepo) getScoreEvents(roundID uuid.UUID) []api.PlayerScoreEvent {
+	if isZeroUUID(roundID) {
+		panic("zero UUID given")
+	}
+
+	r.Lock()
+	defer r.Unlock()
+
+	scores, exists := r.scoreEvents[roundID.String()]
+
+	if !exists {
+		return nil
+	}
+
+	return scores
+}
+
 func isZeroUUID(id uuid.UUID) bool {
 	// Maybe an easy way to do this in uuid but didn't see it off hand...
 	return id.String() == "00000000-0000-0000-0000-000000000000"
+}
+
+func ptr[K any](item K) *K {
+	return &item
 }

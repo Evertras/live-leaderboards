@@ -29,7 +29,6 @@ func TestServerPostRound(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/round", body)
-
 	req.Header.Add("Content-Type", "application/json")
 
 	s.ServeHTTP(w, req)
@@ -82,4 +81,44 @@ func TestServerGetRoundByID(t *testing.T) {
 	assert.Equal(t, storedRound.Id, round.Id, "Mismatched ID")
 	assert.NotNil(t, round.Title, "Title wasn't retrieved properly")
 	assert.Equal(t, "Test Round", round.Title, "Title is wrong")
+}
+
+func TestServerSendScore(t *testing.T) {
+	repo := newMockRoundRepo()
+	s := server.New(repo).WithLogLevel(log.DEBUG)
+
+	storedRound := genTestRound()
+
+	repo.storeRound(storedRound)
+
+	// Sanity check
+	storedScores := repo.getScoreEvents(storedRound.Id)
+	assert.Len(t, storedScores, 0, "Unexpected number of stored scores, bad test setup")
+
+	url := fmt.Sprintf("/round/%s/score", storedRound.Id.String())
+
+	playerScoreEvent := api.PlayerScoreEvent{
+		Hole:        17,
+		PlayerIndex: 2,
+		Score:       5,
+	}
+
+	buf, err := json.Marshal(playerScoreEvent)
+
+	assert.NoError(t, err, "Failed to marshal request json")
+
+	body := bytes.NewReader(buf)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("PUT", url, body)
+	req.Header.Add("Content-Type", "application/json")
+
+	s.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Result().StatusCode)
+
+	storedScores = repo.getScoreEvents(storedRound.Id)
+	assert.Len(t, storedScores, 1, "Unexpected number of stored scores")
+	storedScore := storedScores[0]
+	assert.Equal(t, playerScoreEvent, storedScore)
 }

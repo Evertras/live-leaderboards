@@ -60,6 +60,26 @@ paths:
                   summary: "Success"
               schema:
                 $ref: "#/components/schemas/Round"
+  /round/{roundID}/score:
+    put:
+      tags:
+        - round
+      description: Send a score event
+      parameters:
+        - name: roundID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Score information
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/PlayerScoreEvent"
+      responses:
+        "204":
+          description: Score event sent successfully
 
 components:
   examples:
@@ -353,6 +373,23 @@ components:
       maxItems: 36
       items:
         $ref: "#/components/schemas/HoleScore"
+    PlayerScoreEvent:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "pse"
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/HoleScore"
+        - type: object
+          required:
+            - playerIndex
+          properties:
+            playerIndex:
+              x-oapi-codegen-extra-tags:
+                dynamodbav: "i"
+              minimum: 0
+              type: integer
+              examples:
+                - 0
 
 tags:
   - name: round
