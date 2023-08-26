@@ -48,4 +48,4 @@ jobs:
       - name: Deploy
         run: |
           cd site/build
-          aws s3 sync . s3://leaderboard.evertras.com
+          aws s3 sync --delete . s3://leaderboard.evertras.com
