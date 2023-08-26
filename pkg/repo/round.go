@@ -7,6 +7,7 @@ import (
 	"github.com/Evertras/live-leaderboards/pkg/api"
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/google/uuid"
 )
@@ -15,15 +16,12 @@ const (
 	sortKeyEventRoundStart = "rnd_start"
 )
 
-type primaryKey struct {
-	PK string `dynamodbav:"pk" json:"-"`
-	SK string `dynamodbav:"sk" json:"-"`
-}
-
 type EventRoundStart struct {
 	RoundID string `dynamodbav:"pk" json:"-"`
 	SortKey string `dynamodbav:"sk" json:"-"`
 
+	// TODO: Make this actually detached from the API struct
+	// for storage safety... but for now it's nice for simplifying
 	api.RoundRequest
 }
 
@@ -56,10 +54,10 @@ func (r *Repo) CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req
 }
 
 func (r *Repo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error) {
-	eventStart, err := r.getEventRoundStart(ctx, roundID)
+	eventStart, eventScores, err := r.getRoundData(ctx, roundID)
 
 	if err != nil {
-		fmt.Errorf("failed to get round start event: %w", err)
+		return nil, fmt.Errorf("failed to get round start event: %w", err)
 	}
 
 	title := ""
@@ -72,8 +70,17 @@ func (r *Repo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, err
 
 	for i, player := range eventStart.Players {
 		players[i].Name = player.Name
+	}
 
-		// TODO: Add scores here
+	for _, score := range eventScores {
+		if score.PlayerIndex < 0 || score.PlayerIndex >= len(players) {
+			return nil, fmt.Errorf("found score for player index %d but only have %d players", score.PlayerIndex, len(players))
+		}
+
+		players[score.PlayerIndex].Scores = append(players[score.PlayerIndex].Scores, api.HoleScore{
+			Hole:  score.HoleNumber,
+			Score: score.Score,
+		})
 	}
 
 	round := api.Round{
@@ -86,34 +93,58 @@ func (r *Repo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, err
 	return &round, nil
 }
 
-func (r *Repo) getEventRoundStart(ctx context.Context, roundID uuid.UUID) (*EventRoundStart, error) {
-	key := primaryKey{
-		PK: roundID.String(),
-		SK: sortKeyEventRoundStart,
+func (r *Repo) getRoundData(ctx context.Context, roundID uuid.UUID) (*EventRoundStart, []EventScore, error) {
+	if isZeroUUID(roundID) {
+		return nil, nil, fmt.Errorf("id is empty")
 	}
 
-	avs, err := attributevalue.MarshalMap(key)
+	id := roundID.String()
 
+	keyExpression := expression.Key(keyPrimary).Equal(expression.Value(id))
+	expr, err := expression.NewBuilder().WithKeyCondition(keyExpression).Build()
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal key: %w", err)
+		return nil, nil, fmt.Errorf("failed to build query expression: %w", err)
 	}
 
-	out, err := r.client.GetItem(ctx, &dynamodb.GetItemInput{
-		Key:       avs,
-		TableName: r.tableName,
+	response, err := r.client.Query(ctx, &dynamodb.QueryInput{
+		TableName:                 r.tableName,
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		KeyConditionExpression:    expr.KeyCondition(),
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("r.client.GetItem: %w", err)
+		return nil, nil, fmt.Errorf("failed to query: %w", err)
 	}
 
-	var data EventRoundStart
+	var eventStart EventRoundStart
+	var eventScores []EventScore
 
-	err = attributevalue.UnmarshalMap(out.Item, &data)
+	for _, item := range response.Items {
+		var keyData primaryKey
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
+		err = attributevalue.UnmarshalMap(item, &keyData)
+
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to unmarshal key data: %w", err)
+		}
+
+		switch keyData.SK {
+		case sortKeyEventRoundStart:
+			err = attributevalue.UnmarshalMap(item, &eventStart)
+			if err != nil {
+				return nil, nil, fmt.Errorf("failed to unmarshal start event: %w", err)
+			}
+
+		case sortKeyEventScore:
+			var eventScore EventScore
+			err = attributevalue.UnmarshalMap(item, &eventScore)
+			if err != nil {
+				return nil, nil, fmt.Errorf("failed to unmarshal score event: %w", err)
+			}
+			eventScores = append(eventScores, eventScore)
+		}
 	}
 
-	return &data, nil
+	return &eventStart, eventScores, nil
 }

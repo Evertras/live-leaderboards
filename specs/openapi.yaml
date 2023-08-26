@@ -81,6 +81,8 @@ paths:
         "204":
           description: Score event sent successfully
 
+# TODO: remove dynamodbav tags, this shouldn't double as a database schema...
+# it's just really useful for now to avoid duplicating a lot of work!
 components:
   examples:
     RoundPebble:
@@ -374,8 +376,6 @@ components:
       items:
         $ref: "#/components/schemas/HoleScore"
     PlayerScoreEvent:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "pse"
       type: object
       allOf:
         - $ref: "#/components/schemas/HoleScore"
@@ -384,8 +384,6 @@ components:
             - playerIndex
           properties:
             playerIndex:
-              x-oapi-codegen-extra-tags:
-                dynamodbav: "i"
               minimum: 0
               type: integer
               examples:

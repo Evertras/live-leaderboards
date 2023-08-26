@@ -51,3 +51,63 @@ func TestRoundEventCreateAndFetch(t *testing.T) {
 	assert.Equal(t, id.String(), round.Id.String(), "Wrong ID")
 	assert.Equal(t, req.Course, round.Course, "Course mismatch")
 }
+
+func TestSetScoreEvent(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	repo := newRepo(ctx, t)
+
+	id := uuid.New()
+
+	req := api.RoundRequest{
+		Course: api.Course{
+			Holes: []api.Hole{
+				{
+					DistanceYards: ptr(340),
+					Hole:          1,
+					Par:           4,
+					StrokeIndex:   ptr(13),
+				},
+			},
+			Name: "Test Course",
+			Tees: ptr("White"),
+		},
+		Players: []api.PlayerData{
+			{
+				Name: "Test Player 1",
+			},
+			{
+				Name: "Test Player 2",
+			},
+		},
+		Title: ptr("Super Showdown"),
+	}
+
+	scoreEvent := api.PlayerScoreEvent{
+		PlayerIndex: 1,
+		Hole:        17,
+		Score:       6,
+	}
+
+	err := repo.CreateEventRoundStart(ctx, id, req)
+	if err != nil {
+		t.Fatalf("Failed to create event round start: %v", err)
+	}
+	assert.NoError(t, err, "Failed to create round")
+
+	err = repo.SetScore(ctx, id, scoreEvent)
+	assert.NoError(t, err, "Failed to set score")
+
+	round, err := repo.GetRound(ctx, id)
+
+	assert.NoError(t, err, "Failed to get round")
+	assert.Len(t, round.Players, len(req.Players), "Unexpected number of players returned")
+
+	playerData := round.Players[scoreEvent.PlayerIndex]
+
+	assert.Len(t, playerData.Scores, 1, "Unexpected number of scores")
+	assert.Equal(t, playerData.Scores[0], api.HoleScore{
+		Hole:  scoreEvent.Hole,
+		Score: scoreEvent.Score,
+	}, "Unexpected score values")
+}
