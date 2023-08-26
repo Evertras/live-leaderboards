@@ -22,7 +22,6 @@ services:
   api:
     depends_on:
       - dynamodb-local
-      - table-create
     build: ../
     container_name: api
     ports:
