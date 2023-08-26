@@ -2,8 +2,8 @@ import React from "react";
 import asiaToride from "../../data/courses/asia-toride-in-west.json";
 
 const CreateRound = () => {
-  const createRound = () => {
-    return fetch("http://localhost:8037/round", {
+  const createRound = async () => {
+    const response = await fetch("http://localhost:8037/round", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -12,12 +12,14 @@ const CreateRound = () => {
       body: JSON.stringify(asiaToride),
       redirect: "follow",
     });
+
+    return await response.json();
   };
 
-  const clickCreate = () => {
-    createRound().then((res) => {
-      console.log(res);
-    });
+  const clickCreate = async () => {
+    const response = await createRound();
+
+    console.log(response.id);
   };
 
   return (
