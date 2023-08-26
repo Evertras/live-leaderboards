@@ -37,6 +37,8 @@ jobs:
       - name: Build
         run: |
           make build-site
+          grep -R 'localhost' ./site/build
+          grep -R 'evertras.com' ./site/build
       - name: Set AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
