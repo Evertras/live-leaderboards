@@ -32,7 +32,7 @@ test-integration: ./pkg/api/api.go
 	go test -v -race ./tests
 
 .PHONY: docker-compose-up
-docker-compose-up:
+docker-compose-up: ./pkg/api/api.go
 	cd tests && docker-compose up --build
 
 ################################################################################
