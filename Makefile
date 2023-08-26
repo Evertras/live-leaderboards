@@ -3,6 +3,12 @@ default: .git/hooks/pre-commit generated bin/terraform
 	@# Just set up prettier as a pre-commit hook
 	@echo Ready!
 
+.PHONY: build
+build: build-api build-site
+
+.PHONY: build-api
+build-api: bin/leaderboard-api-lambda
+
 .PHONY: build-site
 build-site:
 	$(MAKE) -C site build
@@ -11,6 +17,11 @@ build-site:
 # Generated stuff
 .PHONY: generated
 generated: ./pkg/api/api.go ./site/src/lib/api diagrams
+
+GO_FILES=$(shell find . -iname *.go)
+bin/leaderboard-api-lambda: $(GO_FILES) go.mod go.sum
+	@mkdir -p bin
+	GOARCH=amd64 GOOS=linux go build -o bin/leaderboard-api-lambda -ldflags="-s -w" ./cmd/lambda
 
 ./pkg/api/api.go: specs/openapi.yaml bin/oapi-codegen
 	@mkdir -p pkg/api
