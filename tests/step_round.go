@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
 	"github.com/cucumber/godog"
@@ -36,6 +37,10 @@ func (t *testContext) iCreateANewRound() error {
 
 	if err != nil {
 		return fmt.Errorf("t.client.PostRound: %w", err)
+	}
+
+	if res.StatusCode != http.StatusCreated {
+		return fmt.Errorf("unexpected status code: %d, expected %d", res.StatusCode, http.StatusCreated)
 	}
 
 	raw, err := io.ReadAll(res.Body)

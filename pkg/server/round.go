@@ -16,7 +16,7 @@ type RoundRepo interface {
 }
 
 func (s *Server) PostRound(ctx echo.Context) error {
-	ctx.Logger().Warn("PostRound")
+	ctx.Logger().Info("PostRound")
 
 	r := api.RoundRequest{}
 
@@ -38,7 +38,7 @@ func (s *Server) PostRound(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	err = ctx.JSON(200, api.CreatedRound{
+	err = ctx.JSON(http.StatusCreated, api.CreatedRound{
 		Id: id,
 	})
 

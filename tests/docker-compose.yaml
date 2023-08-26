@@ -9,14 +9,26 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
-  app-node:
+  table-create:
     depends_on:
       - dynamodb-local
+    image: amazon/aws-cli
+    container_name: table-create
+    environment:
+      AWS_ACCESS_KEY_ID: "DUMMYIDEXAMPLE"
+      AWS_SECRET_ACCESS_KEY: "DUMMYEXAMPLEKEY"
+      AWS_DEFAULT_REGION: "us-east-1"
+    command: dynamodb create-table --table-name=leaderboard-store --attribute-definitions AttributeName=pk,AttributeType=S AttributeName=sk,AttributeType=S --key-schema AttributeName=pk,KeyType=HASH AttributeName=sk,KeyType=RANGE --endpoint-url http://dynamodb-local:8000 --region us-west-2 --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+  api:
+    depends_on:
+      - dynamodb-local
+      - table-create
     build: ../
-    container_name: app-node
+    container_name: api
     ports:
       - "8037:8037"
     environment:
       AWS_ACCESS_KEY_ID: "DUMMYIDEXAMPLE"
       AWS_SECRET_ACCESS_KEY: "DUMMYEXAMPLEKEY"
+      AWS_DEFAULT_REGION: "us-east-1"
       EVERTRAS_LEADERBOARD_TABLE: "leaderboard-store"
