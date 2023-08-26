@@ -3,6 +3,10 @@ default: .git/hooks/pre-commit generated bin/terraform
 	@# Just set up prettier as a pre-commit hook
 	@echo Ready!
 
+.PHONY: build-site
+build-site:
+	$(MAKE) -C site build
+
 ################################################################################
 # Generated stuff
 .PHONY: generated
@@ -35,6 +39,11 @@ diagrams: $(DIAGRAM_SVG)
 	plantuml -svg $<
 
 ################################################################################
+# Local dependencies
+node_modules: package.json package-lock.json
+	npm install
+
+################################################################################
 # Testing
 test: ./pkg/api/api.go
 	go test -race ./pkg/...
@@ -63,10 +72,6 @@ fmt-prettier: node_modules
 .PHONY: fmt-terraform
 fmt-terraform: bin/terraform
 	terraform fmt -recursive ./terraform
-
-# Make sure Prettier is installed
-node_modules: package.json package-lock.json
-	npm install
 
 # Run fmt on pre-commit
 .git/hooks/pre-commit: .evertras/pre-commit.sh
