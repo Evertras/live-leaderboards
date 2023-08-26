@@ -12,4 +12,4 @@ node_modules
 .archives
 
 # Docker volumes for testing
-./tests/docker/
+/tests/docker/
