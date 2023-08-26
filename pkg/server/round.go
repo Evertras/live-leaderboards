@@ -5,14 +5,13 @@ import (
 	"net/http"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
-	"github.com/Evertras/live-leaderboards/pkg/repo"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
 type RoundRepo interface {
 	CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req api.RoundRequest) error
-	GetEventRoundStart(ctx context.Context, roundID uuid.UUID) (*repo.EventRoundStart, error)
+	GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error)
 }
 
 func (s *Server) PostRound(ctx echo.Context) error {
@@ -61,7 +60,7 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 	}
 
 	logger.Info(id)
-	round, err := s.r.GetEventRoundStart(ctx.Request().Context(), id)
+	round, err := s.r.GetRound(ctx.Request().Context(), id)
 
 	if err != nil {
 		ctx.Logger().Errorf("Failed to get round: %v", err.Error())

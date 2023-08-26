@@ -16,13 +16,13 @@ const (
 )
 
 type primaryKey struct {
-	PK string `dynamodbav:"pk"`
-	SK string `dynamodbav:"sk"`
+	PK string `dynamodbav:"pk" json:"-"`
+	SK string `dynamodbav:"sk" json:"-"`
 }
 
 type EventRoundStart struct {
-	RoundID string `dynamodbav:"pk"`
-	SortKey string `dynamodbav:"sk"`
+	RoundID string `dynamodbav:"pk" json:"-"`
+	SortKey string `dynamodbav:"sk" json:"-"`
 
 	api.RoundRequest
 }
@@ -55,7 +55,38 @@ func (r *Repo) CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req
 	return nil
 }
 
-func (r *Repo) GetEventRoundStart(ctx context.Context, roundID uuid.UUID) (*EventRoundStart, error) {
+func (r *Repo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error) {
+	eventStart, err := r.getEventRoundStart(ctx, roundID)
+
+	if err != nil {
+		fmt.Errorf("failed to get round start event: %w", err)
+	}
+
+	title := ""
+
+	if eventStart.Title != nil {
+		title = *eventStart.Title
+	}
+
+	players := make([]api.RoundPlayerData, len(eventStart.Players))
+
+	for i, player := range eventStart.Players {
+		players[i].Name = player.Name
+
+		// TODO: Add scores here
+	}
+
+	round := api.Round{
+		Course:  eventStart.Course,
+		Id:      roundID,
+		Players: players,
+		Title:   title,
+	}
+
+	return &round, nil
+}
+
+func (r *Repo) getEventRoundStart(ctx context.Context, roundID uuid.UUID) (*EventRoundStart, error) {
 	key := primaryKey{
 		PK: roundID.String(),
 		SK: sortKeyEventRoundStart,

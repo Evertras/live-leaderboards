@@ -260,6 +260,8 @@ components:
       allOf:
         - $ref: "#/components/schemas/PlayerData"
         - type: object
+          required:
+            - scores
           properties:
             scores:
               $ref: "#/components/schemas/PlayerScore"
@@ -347,7 +349,7 @@ components:
       x-oapi-codegen-extra-tags:
         dynamodbav: "ps"
       type: array
-      minItems: 1
+      minItems: 0
       maxItems: 36
       items:
         $ref: "#/components/schemas/HoleScore"

@@ -13,6 +13,10 @@ type testContext struct {
 
 	createdRoundID uuid.UUID
 
+	roundRequest *api.RoundRequest
+
+	returnedRound *api.Round
+
 	execCtx context.Context
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRoundEventCreateAndFetch(t *testing.T) {
@@ -44,20 +45,9 @@ func TestRoundEventCreateAndFetch(t *testing.T) {
 		t.Fatalf("Failed to create event round start: %v", err)
 	}
 
-	returnedData, err := repo.GetEventRoundStart(ctx, id)
-	if err != nil {
-		t.Fatalf("Failed to fetch event: %v", err)
-	}
-
-	if returnedData == nil {
-		t.Fatalf("Returned data was nil")
-	}
-
-	if returnedData.RoundID != id.String() {
-		t.Fatalf("Round ID was %q but expected %q", returnedData.RoundID, id.String())
-	}
-
-	if returnedData.Course.Name != req.Course.Name {
-		t.Fatalf("Course name was %q but expected %q", returnedData.Course.Name, req.Course.Name)
-	}
+	round, err := repo.GetRound(ctx, id)
+	assert.NoError(t, err, "Failed to get round")
+	assert.NotNil(t, round, "Returned round is nil")
+	assert.Equal(t, id.String(), round.Id.String(), "Wrong ID")
+	assert.Equal(t, req.Course, round.Course, "Course mismatch")
 }

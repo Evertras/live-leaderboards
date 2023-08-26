@@ -16,6 +16,7 @@ type mockRoundRepo struct {
 	sync.Mutex
 
 	createdEvents map[string]*repo.EventRoundStart
+	rounds        map[string]*api.Round
 }
 
 var _ server.Repo = &mockRoundRepo{}
@@ -23,6 +24,7 @@ var _ server.Repo = &mockRoundRepo{}
 func newMockRoundRepo() *mockRoundRepo {
 	return &mockRoundRepo{
 		createdEvents: make(map[string]*repo.EventRoundStart),
+		rounds:        make(map[string]*api.Round),
 	}
 }
 
@@ -39,15 +41,15 @@ func (r *mockRoundRepo) CreateEventRoundStart(ctx context.Context, roundID uuid.
 	return nil
 }
 
-func (r *mockRoundRepo) GetEventRoundStart(ctx context.Context, roundID uuid.UUID) (*repo.EventRoundStart, error) {
+func (r *mockRoundRepo) GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error) {
 	r.Lock()
 	defer r.Unlock()
 
-	if roundID.String() == "00000000-0000-0000-0000-000000000000" {
+	if isZeroUUID(roundID) {
 		return nil, fmt.Errorf("received empty uuid: %s", roundID.String())
 	}
 
-	round, exists := r.createdEvents[roundID.String()]
+	round, exists := r.rounds[roundID.String()]
 
 	if !exists {
 		return nil, fmt.Errorf("id %q not found", roundID.String())
@@ -58,4 +60,24 @@ func (r *mockRoundRepo) GetEventRoundStart(ctx context.Context, roundID uuid.UUI
 
 func ptr[K any](item K) *K {
 	return &item
+}
+
+func (r *mockRoundRepo) storeRound(round *api.Round) {
+	if round == nil {
+		panic("can't store nil round")
+	}
+
+	if isZeroUUID(round.Id) {
+		panic("zero UUID in round")
+	}
+
+	r.Lock()
+	defer r.Unlock()
+
+	r.rounds[round.Id.String()] = round
+}
+
+func isZeroUUID(id uuid.UUID) bool {
+	// Maybe an easy way to do this in uuid but didn't see it off hand...
+	return id.String() == "00000000-0000-0000-0000-000000000000"
 }

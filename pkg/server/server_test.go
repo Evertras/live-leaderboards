@@ -2,15 +2,12 @@ package server_test
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 
@@ -18,36 +15,13 @@ import (
 	"github.com/Evertras/live-leaderboards/pkg/server"
 )
 
-func genTestRound() *api.RoundRequest {
-	return &api.RoundRequest{
-		Course: api.Course{
-			Holes: []api.Hole{
-				{
-					DistanceYards: ptr(370),
-					Hole:          1,
-					Par:           4,
-					StrokeIndex:   ptr(17),
-				},
-			},
-			Name: "Test Course",
-			Tees: ptr("White"),
-		},
-		Players: []api.PlayerData{
-			{
-				Name: "Test Player",
-			},
-		},
-		Title: ptr("Test Round"),
-	}
-}
-
 func TestServerPostRound(t *testing.T) {
 	repo := newMockRoundRepo()
 	s := server.New(repo).WithLogLevel(log.DEBUG)
 
-	round := genTestRound()
+	roundRequest := genTestRoundRequest()
 
-	buf, err := json.Marshal(round)
+	buf, err := json.Marshal(roundRequest)
 
 	assert.NoError(t, err, "Failed to marshal JSON for round")
 
@@ -71,12 +45,11 @@ func TestServerPostRound(t *testing.T) {
 	assert.NoError(t, err, "Failed to unmarshal created round")
 	assert.NotEmpty(t, created.Id.String())
 
-	internalRound, err := repo.GetEventRoundStart(context.Background(), created.Id)
+	internalRound, exists := repo.createdEvents[created.Id.String()]
 
-	assert.NoError(t, err, "Couldn't get round start event from internal repo")
-
-	assert.NotNil(t, internalRound.Title, "Title wasn't saved properly")
-	assert.Equal(t, "Test Round", *internalRound.Title)
+	assert.True(t, exists, "Round creation not found")
+	assert.NotNil(t, internalRound.Title, "Title was nil")
+	assert.Equal(t, "Test Round", *internalRound.Title, "Mismatched title")
 }
 
 func TestServerGetRoundByID(t *testing.T) {
@@ -84,15 +57,10 @@ func TestServerGetRoundByID(t *testing.T) {
 	s := server.New(repo).WithLogLevel(log.DEBUG)
 
 	storedRound := genTestRound()
-	roundID := uuid.New()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
 
-	err := repo.CreateEventRoundStart(ctx, roundID, *storedRound)
+	repo.storeRound(storedRound)
 
-	assert.NoError(t, err, "Failed to create initial round, bad test setup")
-
-	url := fmt.Sprintf("/round/%s", roundID)
+	url := fmt.Sprintf("/round/%s", storedRound.Id.String())
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", url, nil)
 
@@ -106,11 +74,12 @@ func TestServerGetRoundByID(t *testing.T) {
 
 	var round api.Round
 
-	err = json.Unmarshal(returnedRaw, &round)
+	err := json.Unmarshal(returnedRaw, &round)
 
 	assert.NoError(t, err, "Failed to unmarshal returned round")
 	assert.NotEmpty(t, round.Id.String())
 
+	assert.Equal(t, storedRound.Id, round.Id, "Mismatched ID")
 	assert.NotNil(t, round.Title, "Title wasn't retrieved properly")
 	assert.Equal(t, "Test Round", round.Title, "Title is wrong")
 }

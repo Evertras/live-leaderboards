@@ -7,12 +7,11 @@ import (
 	"net/http"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
-	"github.com/cucumber/godog"
 )
 
 func (t *testContext) iCreateANewRound() error {
 	//func (c *Client) PostRound(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	roundRequest := api.RoundRequest{
+	t.roundRequest = &api.RoundRequest{
 		Course: api.Course{
 			Holes: []api.Hole{
 				{
@@ -33,7 +32,7 @@ func (t *testContext) iCreateANewRound() error {
 		Title: ptr("Test Round"),
 	}
 
-	res, err := t.client.PostRound(t.execCtx, roundRequest)
+	res, err := t.client.PostRound(t.execCtx, *t.roundRequest)
 
 	if err != nil {
 		return fmt.Errorf("t.client.PostRound: %w", err)
@@ -67,9 +66,63 @@ func (t *testContext) iCreateANewRound() error {
 }
 
 func (t *testContext) iViewTheRound() error {
-	return godog.ErrPending
+	id := t.createdRoundID
+
+	response, err := t.client.GetRoundRoundID(t.execCtx, id.String())
+
+	if err != nil {
+		return fmt.Errorf("failed to get round: %w", err)
+	}
+
+	defer func() {
+		_ = response.Body.Close()
+	}()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", response.StatusCode)
+	}
+
+	raw, err := io.ReadAll(response.Body)
+
+	if err != nil {
+		return fmt.Errorf("failed to read body: %w", err)
+	}
+
+	var round api.Round
+
+	err = json.Unmarshal(raw, &round)
+
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal json: %w", err)
+	}
+
+	t.returnedRound = &round
+
+	return nil
 }
 
 func (t *testContext) theRoundIsValidButEmpty() error {
-	return godog.ErrPending
+	if t.returnedRound == nil {
+		return fmt.Errorf("no round returned")
+	}
+
+	if t.createdRoundID.String() != t.returnedRound.Id.String() {
+		return fmt.Errorf("mismatched id, created had %q but returned had %q", t.createdRoundID.String(), t.returnedRound.Id.String())
+	}
+
+	if t.returnedRound.Course.Name != t.roundRequest.Course.Name {
+		return fmt.Errorf("course name mismatch, request had %q but returned had %q", t.roundRequest.Course.Name, t.returnedRound.Course.Name)
+	}
+
+	if len(t.returnedRound.Players) == 0 || len(t.returnedRound.Players) != len(t.roundRequest.Players) {
+		return fmt.Errorf("incorrect number of players returned, request had %d but returned had %d", len(t.roundRequest.Players), len(t.returnedRound.Players))
+	}
+
+	for _, player := range t.returnedRound.Players {
+		if len(player.Scores) != 0 {
+			return fmt.Errorf("found %d scores but expected it to be empty", len(player.Scores))
+		}
+	}
+
+	return nil
 }
