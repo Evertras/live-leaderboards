@@ -36,7 +36,6 @@ jobs:
           echo "REACT_APP_BUILD_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: Build
         run: |
-          export REACT_APP_EVERTRAS_API_BASE_PATH="https://leaderboard-api.evertras.com"
           make build-site
       - name: Set AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
