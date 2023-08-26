@@ -53,6 +53,7 @@ diagrams: $(DIAGRAM_SVG)
 # Local dependencies
 node_modules: package.json package-lock.json
 	npm install
+	@touch node_modules
 
 ################################################################################
 # Testing
