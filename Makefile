@@ -6,11 +6,23 @@ default: .git/hooks/pre-commit generated bin/terraform
 ################################################################################
 # Generated stuff
 .PHONY: generated
-generated: ./pkg/api/api.go diagrams
+generated: ./pkg/api/api.go ./site/src/lib/api diagrams
 
 ./pkg/api/api.go: specs/openapi.yaml bin/oapi-codegen
 	@mkdir -p pkg/api
 	./bin/oapi-codegen -package api specs/openapi.yaml > pkg/api/api.go
+
+./site/src/lib/api: specs/openapi.yaml
+	rm -rf ./site/src/lib/api
+	@# TODO: Confirm if we need to do -u tricks to avoid root in Linux
+	docker run --rm \
+		-v "${PWD}/site/src/lib:/local" \
+		-v "${PWD}/specs:/specs:ro" \
+		openapitools/openapi-generator-cli generate \
+		-i /specs/openapi.yaml \
+		-g typescript-fetch \
+		-o /local/api
+	touch ./site/src/lib/api
 
 DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
 DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)

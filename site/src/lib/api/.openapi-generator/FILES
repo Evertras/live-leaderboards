@@ -1,0 +1,13 @@
+.openapi-generator-ignore
+apis/RoundApi.ts
+apis/index.ts
+index.ts
+models/Course.ts
+models/CreatedRound.ts
+models/Hole.ts
+models/HoleScore.ts
+models/PlayerData.ts
+models/Round.ts
+models/RoundRequest.ts
+models/index.ts
+runtime.ts
