@@ -51,7 +51,8 @@ func (s *Server) PostRound(ctx echo.Context) error {
 }
 
 func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
-	ctx.Logger().Info("GetRoundRoundID")
+	logger := ctx.Logger()
+	logger.Infof("GetRoundRoundID: %s", roundID)
 
 	id, err := uuid.Parse(roundID)
 
@@ -59,6 +60,7 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
+	logger.Info(id)
 	round, err := s.r.GetEventRoundStart(ctx.Request().Context(), id)
 
 	if err != nil {
@@ -66,7 +68,7 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	err = ctx.JSON(200, round)
+	err = ctx.JSON(http.StatusOK, round)
 
 	if err != nil {
 		ctx.Logger().Errorf("Failed to marshal JSON: %v", err.Error())

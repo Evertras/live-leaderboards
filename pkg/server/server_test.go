@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	"github.com/google/uuid"
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
@@ -38,15 +43,13 @@ func genTestRound() *api.RoundRequest {
 
 func TestServerPostRound(t *testing.T) {
 	repo := newMockRoundRepo()
-	s := server.New(repo)
+	s := server.New(repo).WithLogLevel(log.DEBUG)
 
 	round := genTestRound()
 
 	buf, err := json.Marshal(round)
 
-	if err != nil {
-		t.Fatalf("Failed to marshal JSON: %v", err)
-	}
+	assert.NoError(t, err, "Failed to marshal JSON for round")
 
 	body := bytes.NewReader(buf)
 
@@ -57,7 +60,7 @@ func TestServerPostRound(t *testing.T) {
 
 	s.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Result().StatusCode)
+	assert.Equal(t, http.StatusCreated, w.Result().StatusCode)
 
 	returnedRaw := w.Body.Bytes()
 
@@ -74,4 +77,40 @@ func TestServerPostRound(t *testing.T) {
 
 	assert.NotNil(t, internalRound.Title, "Title wasn't saved properly")
 	assert.Equal(t, "Test Round", *internalRound.Title)
+}
+
+func TestServerGetRoundByID(t *testing.T) {
+	repo := newMockRoundRepo()
+	s := server.New(repo).WithLogLevel(log.DEBUG)
+
+	storedRound := genTestRound()
+	roundID := uuid.New()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	err := repo.CreateEventRoundStart(ctx, roundID, *storedRound)
+
+	assert.NoError(t, err, "Failed to create initial round, bad test setup")
+
+	url := fmt.Sprintf("/round/%s", roundID)
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", url, nil)
+
+	req.Header.Add("Accept", "application/json")
+
+	s.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
+
+	returnedRaw := w.Body.Bytes()
+
+	var round api.Round
+
+	err = json.Unmarshal(returnedRaw, &round)
+
+	assert.NoError(t, err, "Failed to unmarshal returned round")
+	assert.NotEmpty(t, round.Id.String())
+
+	assert.NotNil(t, round.Title, "Title wasn't retrieved properly")
+	assert.Equal(t, "Test Round", round.Title, "Title is wrong")
 }

@@ -43,6 +43,10 @@ func (r *mockRoundRepo) GetEventRoundStart(ctx context.Context, roundID uuid.UUI
 	r.Lock()
 	defer r.Unlock()
 
+	if roundID.String() == "00000000-0000-0000-0000-000000000000" {
+		return nil, fmt.Errorf("received empty uuid: %s", roundID.String())
+	}
+
 	round, exists := r.createdEvents[roundID.String()]
 
 	if !exists {

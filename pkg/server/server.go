@@ -39,3 +39,8 @@ func (s *Server) ListenAndServe(addr string) error {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.e.ServeHTTP(w, r)
 }
+
+func (s *Server) WithLogLevel(level log.Lvl) *Server {
+	s.e.Logger.SetLevel(level)
+	return s
+}
