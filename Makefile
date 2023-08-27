@@ -1,6 +1,6 @@
 .PHONY: default
 default: .git/hooks/pre-commit generated bin/terraform
-	@# Just set up prettier as a pre-commit hook
+	$(MAKE) -C site generated
 	@echo Ready!
 
 .PHONY: build
@@ -17,10 +17,14 @@ build-site:
 validate-schema: node_modules
 	npx @redocly/cli lint ./specs/openapi.yaml
 
+clean:
+	rm -rf node_modules
+	$(MAKE) -C site clean
+
 ################################################################################
 # Generated stuff
 .PHONY: generated
-generated: ./pkg/api/api.go ./site/src/lib/api diagrams
+generated: ./pkg/api/api.go diagrams node_modules
 	$(MAKE) -C site generated
 
 GO_FILES=$(shell find . -iname *.go)
