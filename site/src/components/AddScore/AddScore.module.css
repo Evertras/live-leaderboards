@@ -1,3 +1,36 @@
 .AddScore {
   display: flex;
+  flex-direction: column;
+}
+
+.adjustment {
+  display: flex;
+  flex-direction: row;
+  font-size: 4em;
+  align-items: center;
+  justify-content: center;
+}
+
+.adjustment div {
+  padding: 0.5em;
+  width: 2em;
+}
+
+.button {
+  cursor: pointer;
+  user-select: none;
+}
+
+.increment {
+  background-color: darksalmon;
+}
+
+.decrement {
+  background-color: steelblue;
+}
+
+.submit {
+  font-size: 2em;
+  background-color: green;
+  padding: 0.25em;
 }

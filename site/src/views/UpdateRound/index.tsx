@@ -20,6 +20,17 @@ const UpdateRound = () => {
 
   const selectedPlayerName = round.players[selected.playerIndex].name;
 
+  const onSubmitScore = (playerIndex: number, hole: number, score: number) => {
+    console.log(
+      "Submitting score for player",
+      playerIndex,
+      "on hole",
+      hole,
+      "as",
+      score,
+    );
+  };
+
   return (
     <React.Fragment>
       <h1>{round.title ? round.title : round.course.name}</h1>
@@ -36,6 +47,7 @@ const UpdateRound = () => {
         playerIndex={selected.playerIndex}
         hole={selected.hole}
         par={round.course.holes[selected.hole - 1].par}
+        onSubmit={onSubmitScore}
       />
     </React.Fragment>
   );
