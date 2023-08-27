@@ -1,5 +1,5 @@
 .PHONY: build
-build: node_modules ./src/lib/api
+build: node_modules ./src/lib/client/api.d.ts
 	rm -rf build
 	npm run build
 
