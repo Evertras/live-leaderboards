@@ -1,4 +1,10 @@
-import { Configuration, Round, RoundApi, RoundRequest } from "../api";
+import {
+  Configuration,
+  Round,
+  RoundApi,
+  RoundRequest,
+  RoundRoundIDScorePutRequest,
+} from "../api";
 
 const configuration = new Configuration({
   basePath:
@@ -16,6 +22,24 @@ export function getRoundByID(id: string): Promise<Round> {
 
 export async function createRound(request: RoundRequest): Promise<string> {
   return roundAPI.roundPost({ roundRequest: request }).then((res) => res.id);
+}
+
+export async function submitScore(
+  roundID: string,
+  playerIndex: number,
+  hole: number,
+  score: number,
+): Promise<void> {
+  const reqParams: RoundRoundIDScorePutRequest = {
+    roundID: roundID,
+    body: {
+      playerIndex,
+      hole,
+      score,
+    },
+  };
+
+  return roundAPI.roundRoundIDScorePut(reqParams);
 }
 
 export { roundAPI };

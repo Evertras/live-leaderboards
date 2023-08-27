@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
-import { getRoundByID } from "../../lib/client";
+import { getRoundByID, submitScore } from "../../lib/client";
 
 import { Round } from "../../lib/api";
 import Scorecard from "../../components/Scorecard";
@@ -28,16 +28,10 @@ const UpdateRound = () => {
       playerScores.some((s: any) => s.hole === hole && s.score === score)
     ) {
       console.log("Score didn't change, ignoring");
+      return;
     }
 
-    console.log(
-      "Submitting score for player",
-      playerIndex,
-      "on hole",
-      hole,
-      "as",
-      score,
-    );
+    submitScore(round.id, playerIndex, hole, score);
   };
 
   return (
