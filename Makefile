@@ -66,7 +66,15 @@ test-integration: ./pkg/api/api.go
 
 .PHONY: docker-compose-up
 docker-compose-up: ./pkg/api/api.go
-	cd tests && docker-compose up --build
+	cd tests && docker-compose up --build -d
+
+.PHONY: docker-compose-up-detached
+docker-compose-up-detached: ./pkg/api/api.go
+	cd tests && docker-compose up --build -d
+
+.PHONY: docker-compose-down
+docker-compose-down:
+	cd tests && docker-compose down
 
 ################################################################################
 # Formatting

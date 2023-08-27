@@ -1,0 +1,29 @@
+name: build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  api:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.20.5
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Start test environment
+        run: make docker-compose-up-detached
+
+      - name: Run integration tests
+        run: make test-integration
+
+      - name: Cleanup test environment
+        if: always()
+        run: make docker-compose-down
