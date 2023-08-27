@@ -17,6 +17,8 @@ type testContext struct {
 
 	returnedRound *api.Round
 
+	returnedLatestRoundID uuid.UUID
+
 	execCtx context.Context
 }
 

@@ -1,7 +1,9 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
@@ -134,4 +136,50 @@ func (t *testContext) theScoreForPlayerOnHoleIs(playerIndex, hole, score int) er
 	}
 
 	return fmt.Errorf("did not find player score for hole %d", hole)
+}
+
+func (t *testContext) iGetTheLatestRoundID() error {
+	response, err := t.client.GetLatestRoundID(t.execCtx)
+
+	if err != nil {
+		return fmt.Errorf("failed to get latest: %w", err)
+	}
+
+	defer func() {
+		_ = response.Body.Close()
+	}()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected http status: %d", response.StatusCode)
+	}
+
+	body, err := io.ReadAll(response.Body)
+
+	if err != nil {
+		return fmt.Errorf("failed to read body: %w", err)
+	}
+
+	var latest api.RoundID
+
+	err = json.Unmarshal(body, &latest)
+
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal %q: %w", string(body), err)
+	}
+
+	t.returnedLatestRoundID = latest
+
+	return nil
+}
+
+func (t *testContext) theLatestRoundIDMatches() error {
+	if isZeroUUID(t.returnedLatestRoundID) {
+		return fmt.Errorf("no latest round ID stored")
+	}
+
+	if t.returnedLatestRoundID.String() != t.createdRoundID.String() {
+		return fmt.Errorf("last created round is %q but returned latest round ID is %q", t.createdRoundID.String(), t.returnedLatestRoundID.String())
+	}
+
+	return nil
 }

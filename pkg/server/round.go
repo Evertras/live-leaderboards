@@ -13,6 +13,7 @@ type RoundRepo interface {
 	CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req api.RoundRequest) error
 	GetRound(ctx context.Context, roundID uuid.UUID) (*api.Round, error)
 	SetScore(ctx context.Context, roundID uuid.UUID, scoreData api.PlayerScoreEvent) error
+	GetLatestRoundID(ctx context.Context) (string, error)
 }
 
 func (s *Server) PostRound(ctx echo.Context) error {
@@ -72,6 +73,27 @@ func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
 
 	if err != nil {
 		ctx.Logger().Errorf("Failed to marshal JSON: %v", err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	return nil
+}
+
+func (s *Server) GetLatestRoundID(ctx echo.Context) error {
+	logger := ctx.Logger()
+	logger.Info("GetLatestRoundID")
+
+	latest, err := s.r.GetLatestRoundID(ctx.Request().Context())
+
+	if err != nil {
+		logger.Errorf("Failed to get latest round ID: %s", err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	err = ctx.JSON(200, latest)
+
+	if err != nil {
+		logger.Errorf("Failed to marshal latest value: %s", err.Error())
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 

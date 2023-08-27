@@ -48,7 +48,33 @@ func (r *Repo) CreateEventRoundStart(ctx context.Context, roundID uuid.UUID, req
 	)
 
 	if err != nil {
-		return fmt.Errorf("r.client.PutItem: %w", err)
+		return fmt.Errorf("event r.client.PutItem: %w", err)
+	}
+
+	latest := Latest{
+		primaryKey: primaryKey{
+			PK: partitionKeyLatest,
+			SK: sortKeyLatestRound,
+		},
+		ID: roundID.String(),
+	}
+
+	avs, err = attributevalue.MarshalMap(latest)
+
+	if err != nil {
+		return fmt.Errorf("failed to marshal latest data: %w", err)
+	}
+
+	_, err = r.client.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			Item:      avs,
+			TableName: r.tableName,
+		},
+	)
+
+	if err != nil {
+		return fmt.Errorf("latest r.client.PutItem: %w", err)
 	}
 
 	return nil

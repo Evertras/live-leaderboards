@@ -56,3 +56,16 @@ It also contains:
 | `s`   | number | Player's score for the hole |
 
 ![Diagram](./diagrams/event_score.svg)
+
+## Latest info
+
+A special partition key that stores latest information.
+
+- `latest` (Partition key)
+- `rnd_id` (Sort key)
+
+It also contains:
+
+| Field | Type   | Description         |
+| ----- | ------ | ------------------- |
+| `id`  | string | The latest round ID |

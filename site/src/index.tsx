@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        path: "/create",
         element: <CreateRound />,
         action: createAction,
       },
