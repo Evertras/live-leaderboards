@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 
@@ -121,4 +122,28 @@ func TestServerSendScore(t *testing.T) {
 	assert.Len(t, storedScores, 1, "Unexpected number of stored scores")
 	storedScore := storedScores[0]
 	assert.Equal(t, playerScoreEvent, storedScore)
+}
+
+func TestServerGetLatestRoundID(t *testing.T) {
+	repo := newMockRoundRepo()
+	s := server.New(repo).WithLogLevel(log.DEBUG)
+
+	latestID := uuid.New()
+
+	repo.setLatestRoundID(latestID)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/latest/roundID", nil)
+	req.Header.Add("Accept", "application/json")
+
+	s.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
+
+	var returnedID uuid.UUID
+
+	err := json.Unmarshal(w.Body.Bytes(), &returnedID)
+
+	assert.NoError(t, err, "Failed to unmarshal ID response")
+	assert.Equal(t, latestID, returnedID)
 }
