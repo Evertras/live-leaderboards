@@ -7,6 +7,7 @@ const { GET, POST, PUT } = createClient<paths>({
     "https://leaderboard-api.evertras.com",
 });
 
+export type Course = components["schemas"]["Course"];
 export type Round = components["schemas"]["Round"];
 export type RoundID = components["schemas"]["RoundID"];
 export type RoundRequest = components["schemas"]["RoundRequest"];

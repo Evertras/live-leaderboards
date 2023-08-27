@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useLoaderData, useRevalidator } from "react-router-dom";
 
-import { getRoundByID } from "../../lib/client";
+import { getRoundByID, Round } from "../../lib/client";
 
-import { Round } from "../../lib/api";
 import Scorecard from "../../components/Scorecard";
 
 export async function loadRound({ params }: any) {

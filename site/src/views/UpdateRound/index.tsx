@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useLoaderData, useRevalidator } from "react-router-dom";
 
-import { getRoundByID, submitScore } from "../../lib/client";
+import { getRoundByID, Round, submitScore } from "../../lib/client";
 
-import { Round } from "../../lib/api";
 import Scorecard from "../../components/Scorecard";
 import AddScore from "../../components/AddScore";
 

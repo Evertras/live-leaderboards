@@ -3,6 +3,9 @@ build: node_modules ./src/lib/api
 	rm -rf build
 	npm run build
 
+.PHONY: generated
+generated: ./src/lib/client/api.d.ts
+
 ./src/lib/client/api.d.ts: node_modules ../specs/openapi.yaml
 	npx openapi-typescript ../specs/openapi.yaml -o ./src/lib/client/api.d.ts
 
