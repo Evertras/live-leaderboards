@@ -26,8 +26,8 @@ const AddScore = ({
   return (
     <React.Fragment>
       <div className={styles.AddScore}>
-        <div>
-          {playerName} ({playerIndex}) on {hole} (par {par})
+        <div className={styles.header}>
+          {playerName} on {hole} (par {par})
         </div>
         <div className={styles.adjustment}>
           <div
