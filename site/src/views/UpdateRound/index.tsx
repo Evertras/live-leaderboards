@@ -26,11 +26,11 @@ const UpdateRound = () => {
     hole: number,
     score: number,
   ) => {
-    const playerScores: any[] | null = round.players[playerIndex].scores;
+    const playerScores = round.players[playerIndex].scores;
 
     if (
       playerScores &&
-      playerScores.some((s: any) => s.hole === hole && s.score === score)
+      playerScores.some((s) => s.hole === hole && s.score === score)
     ) {
       console.log("Score didn't change, ignoring");
       return;

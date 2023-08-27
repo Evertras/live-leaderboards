@@ -1,5 +1,9 @@
 import React from "react";
 import { Round } from "../../lib/client";
+import {
+  calcCurrentMatchplayWinner,
+  getHoleWinnerPlayerIndex,
+} from "../../lib/winner";
 
 import styles from "./Scorecard.module.css";
 
@@ -31,26 +35,10 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
     };
   });
 
-  const holeWinners = round.course.holes.map((_: any, i: number) => {
-    const playerScoresForHole: number[] = playerData.map(
-      (p: any) => p.scores[i],
-    );
-
-    if (playerScoresForHole.some((s: number | null) => s === null)) {
-      return null;
-    }
-
-    const lowScore = Math.min(...playerScoresForHole);
-    const numWithScore = playerScoresForHole.filter(
-      (s: number) => s === lowScore,
-    ).length;
-
-    if (numWithScore > 1) {
-      return null;
-    }
-
-    return playerScoresForHole.findIndex((s: number) => s === lowScore);
-  });
+  const winner = calcCurrentMatchplayWinner(round);
+  const holeWinners = round.course.holes.map((h) =>
+    getHoleWinnerPlayerIndex(round, h.hole),
+  );
 
   const onClick = (playerIndex: number, hole: number) => {
     if (onSelect) {
@@ -85,7 +73,13 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
           <tbody>
             {playerData.map((p: any, i: number) => (
               <tr key={i}>
-                <td>{p.name}</td>
+                <td
+                  className={
+                    winner.currentWinnerPlayerIndex === i ? styles.winner : ""
+                  }
+                >
+                  {p.name}
+                </td>
                 {p.scores.map((s: number | null, h: number) => (
                   <td
                     key={h}
