@@ -184,16 +184,43 @@ components:
           - name: John Daly
 
   schemas:
-    HoleNumber:
+    Course:
       x-oapi-codegen-extra-tags:
-        dynamodbav: "n"
-      type: integer
-      minimum: 1
-      maximum: 36
-      examples:
-        - 1
-        - 2
-        - 3
+        dynamodbav: "c"
+      type: object
+      required:
+        - name
+        - holes
+      properties:
+        name:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "n"
+          maxLength: 50
+          type: string
+          examples:
+            - Pebble Beach
+        tees:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "t"
+          maxLength: 20
+          type: string
+          examples:
+            - White
+        holes:
+          x-oapi-codegen-extra-tags:
+            dynamodbav: "h"
+          type: array
+          minItems: 1
+          maxItems: 36
+          items:
+            $ref: "#/components/schemas/Hole"
+    CreatedRound:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: "#/components/schemas/RoundID"
     Hole:
       type: object
       required:
@@ -232,36 +259,34 @@ components:
             - 14
             - 8
             - 11
-    Course:
+    HoleNumber:
       x-oapi-codegen-extra-tags:
-        dynamodbav: "c"
+        dynamodbav: "n"
+      type: integer
+      minimum: 1
+      maximum: 36
+      examples:
+        - 1
+        - 2
+        - 3
+    HoleScore:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "hs"
       type: object
       required:
-        - name
-        - holes
+        - hole
+        - score
       properties:
-        name:
+        hole:
+          $ref: "#/components/schemas/HoleNumber"
+        score:
           x-oapi-codegen-extra-tags:
-            dynamodbav: "n"
-          maxLength: 50
-          type: string
+            dynamodbav: "s"
+          type: integer
+          minimum: 1
+          maximum: 30
           examples:
-            - Pebble Beach
-        tees:
-          x-oapi-codegen-extra-tags:
-            dynamodbav: "t"
-          maxLength: 20
-          type: string
-          examples:
-            - White
-        holes:
-          x-oapi-codegen-extra-tags:
-            dynamodbav: "h"
-          type: array
-          minItems: 1
-          maxItems: 36
-          items:
-            $ref: "#/components/schemas/Hole"
+            - 4
     PlayerData:
       x-oapi-codegen-extra-tags:
         dynamodbav: "pd"
@@ -287,98 +312,6 @@ components:
       uniqueItems: true
       items:
         $ref: "#/components/schemas/PlayerData"
-    RoundPlayerData:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "rpd"
-      type: object
-      allOf:
-        - $ref: "#/components/schemas/PlayerData"
-        - type: object
-          required:
-            - scores
-          properties:
-            scores:
-              $ref: "#/components/schemas/PlayerScore"
-    RoundPlayers:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "rp"
-      type: array
-      minItems: 1
-      maxItems: 12
-      uniqueItems: true
-      items:
-        $ref: "#/components/schemas/RoundPlayerData"
-    RoundID:
-      type: string
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "id"
-      x-go-type: uuid.UUID
-      x-go-type-import:
-        path: github.com/google/uuid
-      examples:
-        - "7F4EF598-1F47-4E01-8408-EDDC71FE53E9"
-    RoundTitle:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "t"
-      type: string
-      maxLength: 50
-      examples:
-        - Super Showdown
-    RoundRequest:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "req"
-      type: object
-      required:
-        - course
-        - players
-      properties:
-        title:
-          $ref: "#/components/schemas/RoundTitle"
-        course:
-          $ref: "#/components/schemas/Course"
-        players:
-          $ref: "#/components/schemas/PlayerGroup"
-    CreatedRound:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          $ref: "#/components/schemas/RoundID"
-    Round:
-      type: object
-      required:
-        - id
-        - title
-        - course
-        - players
-      properties:
-        id:
-          $ref: "#/components/schemas/RoundID"
-        title:
-          $ref: "#/components/schemas/RoundTitle"
-        course:
-          $ref: "#/components/schemas/Course"
-        players:
-          $ref: "#/components/schemas/RoundPlayers"
-    HoleScore:
-      x-oapi-codegen-extra-tags:
-        dynamodbav: "hs"
-      type: object
-      required:
-        - hole
-        - score
-      properties:
-        hole:
-          $ref: "#/components/schemas/HoleNumber"
-        score:
-          x-oapi-codegen-extra-tags:
-            dynamodbav: "s"
-          type: integer
-          minimum: 1
-          maximum: 30
-          examples:
-            - 4
     PlayerScore:
       x-oapi-codegen-extra-tags:
         dynamodbav: "ps"
@@ -400,6 +333,73 @@ components:
               type: integer
               examples:
                 - 0
+    Round:
+      type: object
+      required:
+        - id
+        - title
+        - course
+        - players
+      properties:
+        id:
+          $ref: "#/components/schemas/RoundID"
+        title:
+          $ref: "#/components/schemas/RoundTitle"
+        course:
+          $ref: "#/components/schemas/Course"
+        players:
+          $ref: "#/components/schemas/RoundPlayers"
+    RoundID:
+      type: string
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "id"
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+      examples:
+        - "7F4EF598-1F47-4E01-8408-EDDC71FE53E9"
+    RoundPlayers:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "rp"
+      type: array
+      minItems: 1
+      maxItems: 12
+      uniqueItems: true
+      items:
+        $ref: "#/components/schemas/RoundPlayerData"
+    RoundPlayerData:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "rpd"
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PlayerData"
+        - type: object
+          required:
+            - scores
+          properties:
+            scores:
+              $ref: "#/components/schemas/PlayerScore"
+    RoundTitle:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "t"
+      type: string
+      maxLength: 50
+      examples:
+        - Super Showdown
+    RoundRequest:
+      x-oapi-codegen-extra-tags:
+        dynamodbav: "req"
+      type: object
+      required:
+        - course
+        - players
+      properties:
+        title:
+          $ref: "#/components/schemas/RoundTitle"
+        course:
+          $ref: "#/components/schemas/Course"
+        players:
+          $ref: "#/components/schemas/PlayerGroup"
 
 tags:
   - name: round
