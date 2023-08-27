@@ -31,6 +31,27 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
     };
   });
 
+  const holeWinners = round.course.holes.map((_: any, i: number) => {
+    const playerScoresForHole: number[] = playerData.map(
+      (p: any) => p.scores[i],
+    );
+
+    if (playerScoresForHole.some((s: number | null) => s === null)) {
+      return null;
+    }
+
+    const lowScore = Math.min(...playerScoresForHole);
+    const numWithScore = playerScoresForHole.filter(
+      (s: number) => s === lowScore,
+    ).length;
+
+    if (numWithScore > 1) {
+      return null;
+    }
+
+    return playerScoresForHole.findIndex((s: number) => s === lowScore);
+  });
+
   const onClick = (playerIndex: number, hole: number) => {
     if (onSelect) {
       onSelect(playerIndex, hole);
@@ -66,7 +87,11 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
               <tr key={i}>
                 <td>{p.name}</td>
                 {p.scores.map((s: number | null, h: number) => (
-                  <td key={h} onClick={() => onClick(i, h + 1)}>
+                  <td
+                    key={h}
+                    className={holeWinners[h] === i ? styles.winner : ""}
+                    onClick={() => onClick(i, h + 1)}
+                  >
                     {s}
                   </td>
                 ))}
