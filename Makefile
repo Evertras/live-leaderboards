@@ -38,6 +38,7 @@ bin/leaderboard-api-lambda: $(GO_FILES) go.mod go.sum
 		-g typescript-fetch \
 		-o /local/api
 	touch ./site/src/lib/api
+	$(MAKE) fmt-prettier
 
 DIAGRAM_PUML=$(shell find docs/diagrams -iname '*.puml')
 DIAGRAM_SVG=$(DIAGRAM_PUML:.puml=.svg)
