@@ -13,6 +13,10 @@ build-api: bin/leaderboard-api-lambda
 build-site:
 	$(MAKE) -C site build
 
+.PHONY: validate-schema
+validate-schema: node_modules
+	npx @redocly/cli lint ./specs/openapi.yaml
+
 ################################################################################
 # Generated stuff
 .PHONY: generated
