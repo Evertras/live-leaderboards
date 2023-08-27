@@ -17,6 +17,11 @@ build-site:
 validate-schema: node_modules
 	npx @redocly/cli lint ./specs/openapi.yaml
 
+.PHONY: terraform-apply
+terraform-apply: bin/terraform ./bin/leaderboard-api-lambda
+	cd terraform && ../bin/terraform apply
+
+.PHONY: clean
 clean:
 	rm -rf node_modules
 	$(MAKE) -C site clean
