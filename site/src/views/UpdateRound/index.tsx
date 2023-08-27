@@ -21,6 +21,15 @@ const UpdateRound = () => {
   const selectedPlayerName = round.players[selected.playerIndex].name;
 
   const onSubmitScore = (playerIndex: number, hole: number, score: number) => {
+    const playerScores: any[] | null = round.players[playerIndex].scores;
+
+    if (
+      playerScores &&
+      playerScores.some((s: any) => s.hole === hole && s.score === score)
+    ) {
+      console.log("Score didn't change, ignoring");
+    }
+
     console.log(
       "Submitting score for player",
       playerIndex,
