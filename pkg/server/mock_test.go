@@ -18,6 +18,7 @@ type mockRoundRepo struct {
 	createdEvents map[string]*repo.EventRoundStart
 	rounds        map[string]*api.Round
 	scoreEvents   map[string][]api.PlayerScoreEvent
+	latestRoundID uuid.UUID
 }
 
 var _ server.Repo = &mockRoundRepo{}
@@ -73,6 +74,13 @@ func (r *mockRoundRepo) SetScore(ctx context.Context, roundID uuid.UUID, score a
 	return nil
 }
 
+func (r *mockRoundRepo) GetLatestRoundID(ctx context.Context) (string, error) {
+	r.Lock()
+	defer r.Unlock()
+
+	return r.latestRoundID.String(), nil
+}
+
 func (r *mockRoundRepo) storeRound(round *api.Round) {
 	if round == nil {
 		panic("can't store nil round")
@@ -86,6 +94,13 @@ func (r *mockRoundRepo) storeRound(round *api.Round) {
 	defer r.Unlock()
 
 	r.rounds[round.Id.String()] = round
+}
+
+func (r *mockRoundRepo) setLatestRoundID(roundID uuid.UUID) {
+	r.Lock()
+	defer r.Unlock()
+
+	r.latestRoundID = roundID
 }
 
 func (r *mockRoundRepo) getScoreEvents(roundID uuid.UUID) []api.PlayerScoreEvent {

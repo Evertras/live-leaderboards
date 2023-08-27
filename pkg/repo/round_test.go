@@ -50,6 +50,10 @@ func TestRoundEventCreateAndFetch(t *testing.T) {
 	assert.NotNil(t, round, "Returned round is nil")
 	assert.Equal(t, id.String(), round.Id.String(), "Wrong ID")
 	assert.Equal(t, req.Course, round.Course, "Course mismatch")
+
+	latestID, err := repo.GetLatestRoundID(ctx)
+	assert.NoError(t, err, "Failed to get latest round ID")
+	assert.Equal(t, id.String(), latestID, "Latest ID is not the newly created round")
 }
 
 func TestSetScoreEvent(t *testing.T) {

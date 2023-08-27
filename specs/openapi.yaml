@@ -39,6 +39,18 @@ paths:
                     id: 43187519-9C19-49CB-91BE-C4231178CEB9
               schema:
                 $ref: "#/components/schemas/CreatedRound"
+  /latest/roundID:
+    get:
+      tags:
+        - round
+      description: Gets the latest round ID
+      responses:
+        "200":
+          description: Round ID retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoundID"
   /round/{roundID}:
     get:
       tags:

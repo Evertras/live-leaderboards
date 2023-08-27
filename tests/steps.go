@@ -20,4 +20,6 @@ func InitializeScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^the round is valid but empty$`, t.theRoundIsValidButEmpty)
 	sc.Step(`^player (\d+) scores a (\d+) on hole (\d+)$`, t.playerScoresOnHole)
 	sc.Step(`^the score for player (\d+) on hole (\d+) is (\d+)`, t.theScoreForPlayerOnHoleIs)
+	sc.Step(`^I get the latest round ID$`, t.iGetTheLatestRoundID)
+	sc.Step(`^the latest round ID matches$`, t.theLatestRoundIDMatches)
 }
