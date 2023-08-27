@@ -5,6 +5,7 @@ import styles from "./Scorecard.module.css";
 
 export interface ScorecardProps {
   round: Round;
+  onSelect?: (playerIndex: number, holeNumber: number) => void;
 }
 
 // TODO: Figure out how to automate this better, it's based off API
@@ -14,7 +15,7 @@ interface PlayerData {
   scores: { hole: number; score: number }[];
 }
 
-const Scorecard = ({ round }: ScorecardProps) => {
+const Scorecard = ({ round, onSelect }: ScorecardProps) => {
   const playerData = round.players.map((p: PlayerData) => {
     const holeScores = round.course.holes.map(() => null);
 
@@ -32,6 +33,13 @@ const Scorecard = ({ round }: ScorecardProps) => {
       scores: holeScores,
     };
   });
+
+  const onClick = (playerIndex: number, hole: number) => {
+    if (onSelect) {
+      onSelect(playerIndex, hole);
+    }
+  };
+
   return (
     <React.Fragment>
       <div className={styles.Scorecard}>
@@ -60,9 +68,11 @@ const Scorecard = ({ round }: ScorecardProps) => {
             {playerData.map((p: any, i: number) => (
               <tr key={i}>
                 <td>{p.name}</td>
-                {p.scores.map((s: number | null, i: number) => {
-                  return <td key={i}>{s}</td>;
-                })}
+                {p.scores.map((s: number | null, h: number) => (
+                  <td key={h} onClick={() => onClick(i, h + 1)}>
+                    {s}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
