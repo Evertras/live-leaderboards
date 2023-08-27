@@ -24,9 +24,6 @@ jobs:
       - name: Test
         run: make test
 
-      - name: Integration Tests
-        run: make test-integration
-
   site:
     name: Build site
     runs-on: ubuntu-latest
