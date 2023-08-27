@@ -24,7 +24,7 @@ clean:
 ################################################################################
 # Generated stuff
 .PHONY: generated
-generated: ./pkg/api/api.go diagrams
+generated: ./pkg/api/api.go diagrams node_modules
 	$(MAKE) -C site generated
 
 GO_FILES=$(shell find . -iname *.go)
