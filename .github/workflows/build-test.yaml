@@ -7,7 +7,7 @@ on:
 
 jobs:
   api:
-    name: Build and test
+    name: Build and test API
     runs-on: ubuntu-latest
     steps:
       - name: Install Go

@@ -30,6 +30,12 @@ func ptr[K any](item K) *K {
 }
 
 func TestMain(m *testing.M) {
+	// Overwrite any env vars to be safe, and also avoid needing to do that
+	// when running tests in CI, etc anyway
+	os.Setenv("AWS_ACCESS_KEY_ID", "DUMMYID")
+	os.Setenv("AWS_SECRET_ACCESS_KEY", "DUMMYKEY")
+	os.Setenv("AWS_DEFAULT_REGION", "us-east-1")
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Failed to start docker pool: %v", err)
