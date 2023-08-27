@@ -27,7 +27,7 @@ type EventScore struct {
 func (r *Repo) SetScore(ctx context.Context, roundID uuid.UUID, req api.PlayerScoreEvent) error {
 	data := EventScore{
 		RoundID:     roundID.String(),
-		SortKey:     sortKeyEventScore,
+		SortKey:     fmt.Sprintf("%s^%d^%d", sortKeyEventScore, req.PlayerIndex, req.Hole),
 		HoleNumber:  req.Hole,
 		PlayerIndex: req.PlayerIndex,
 		Score:       req.Score,
