@@ -5,8 +5,9 @@ import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App";
-import CreateRound, { createAction } from "./components/CreateRound";
+import CreateRound, { createAction } from "./views/CreateRound";
 import ViewRound, { loadRound } from "./views/ViewRound";
+import UpdateRound from "./views/UpdateRound";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
       {
         path: "/round/:id",
         element: <ViewRound />,
+        loader: loadRound,
+      },
+      {
+        path: "/round/:id/update",
+        element: <UpdateRound />,
         loader: loadRound,
       },
     ],

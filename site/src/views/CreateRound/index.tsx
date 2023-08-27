@@ -19,7 +19,7 @@ export async function createAction(): Promise<Response> {
 
   const id = await createRound(req);
 
-  return redirect(`/round/${id}`);
+  return redirect(`/round/${id}/update`);
 }
 
 const CreateRound = () => {
