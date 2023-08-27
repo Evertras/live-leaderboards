@@ -99,11 +99,11 @@ type RoundRequest struct {
 // RoundTitle defines model for RoundTitle.
 type RoundTitle = string
 
-// PostRoundJSONRequestBody defines body for PostRound for application/json ContentType.
-type PostRoundJSONRequestBody = RoundRequest
+// CreateRoundJSONRequestBody defines body for CreateRound for application/json ContentType.
+type CreateRoundJSONRequestBody = RoundRequest
 
-// PutRoundRoundIDScoreJSONRequestBody defines body for PutRoundRoundIDScore for application/json ContentType.
-type PutRoundRoundIDScoreJSONRequestBody = PlayerScoreEvent
+// SendScoreJSONRequestBody defines body for SendScore for application/json ContentType.
+type SendScoreJSONRequestBody = PlayerScoreEvent
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -181,18 +181,18 @@ type ClientInterface interface {
 	// GetLatestRoundID request
 	GetLatestRoundID(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// PostRoundWithBody request with any body
-	PostRoundWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateRoundWithBody request with any body
+	CreateRoundWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PostRound(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateRound(ctx context.Context, body CreateRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetRoundRoundID request
-	GetRoundRoundID(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetRound request
+	GetRound(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// PutRoundRoundIDScoreWithBody request with any body
-	PutRoundRoundIDScoreWithBody(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// SendScoreWithBody request with any body
+	SendScoreWithBody(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PutRoundRoundIDScore(ctx context.Context, roundID string, body PutRoundRoundIDScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	SendScore(ctx context.Context, roundID string, body SendScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetLatestRoundID(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -207,8 +207,8 @@ func (c *Client) GetLatestRoundID(ctx context.Context, reqEditors ...RequestEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostRoundWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostRoundRequestWithBody(c.Server, contentType, body)
+func (c *Client) CreateRoundWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateRoundRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -219,8 +219,8 @@ func (c *Client) PostRoundWithBody(ctx context.Context, contentType string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostRound(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostRoundRequest(c.Server, body)
+func (c *Client) CreateRound(ctx context.Context, body CreateRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateRoundRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -231,8 +231,8 @@ func (c *Client) PostRound(ctx context.Context, body PostRoundJSONRequestBody, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetRoundRoundID(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRoundRoundIDRequest(c.Server, roundID)
+func (c *Client) GetRound(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRoundRequest(c.Server, roundID)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +243,8 @@ func (c *Client) GetRoundRoundID(ctx context.Context, roundID string, reqEditors
 	return c.Client.Do(req)
 }
 
-func (c *Client) PutRoundRoundIDScoreWithBody(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutRoundRoundIDScoreRequestWithBody(c.Server, roundID, contentType, body)
+func (c *Client) SendScoreWithBody(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSendScoreRequestWithBody(c.Server, roundID, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -255,8 +255,8 @@ func (c *Client) PutRoundRoundIDScoreWithBody(ctx context.Context, roundID strin
 	return c.Client.Do(req)
 }
 
-func (c *Client) PutRoundRoundIDScore(ctx context.Context, roundID string, body PutRoundRoundIDScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutRoundRoundIDScoreRequest(c.Server, roundID, body)
+func (c *Client) SendScore(ctx context.Context, roundID string, body SendScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSendScoreRequest(c.Server, roundID, body)
 	if err != nil {
 		return nil, err
 	}
@@ -294,19 +294,19 @@ func NewGetLatestRoundIDRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewPostRoundRequest calls the generic PostRound builder with application/json body
-func NewPostRoundRequest(server string, body PostRoundJSONRequestBody) (*http.Request, error) {
+// NewCreateRoundRequest calls the generic CreateRound builder with application/json body
+func NewCreateRoundRequest(server string, body CreateRoundJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostRoundRequestWithBody(server, "application/json", bodyReader)
+	return NewCreateRoundRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostRoundRequestWithBody generates requests for PostRound with any type of body
-func NewPostRoundRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCreateRoundRequestWithBody generates requests for CreateRound with any type of body
+func NewCreateRoundRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -334,8 +334,8 @@ func NewPostRoundRequestWithBody(server string, contentType string, body io.Read
 	return req, nil
 }
 
-// NewGetRoundRoundIDRequest generates requests for GetRoundRoundID
-func NewGetRoundRoundIDRequest(server string, roundID string) (*http.Request, error) {
+// NewGetRoundRequest generates requests for GetRound
+func NewGetRoundRequest(server string, roundID string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -368,19 +368,19 @@ func NewGetRoundRoundIDRequest(server string, roundID string) (*http.Request, er
 	return req, nil
 }
 
-// NewPutRoundRoundIDScoreRequest calls the generic PutRoundRoundIDScore builder with application/json body
-func NewPutRoundRoundIDScoreRequest(server string, roundID string, body PutRoundRoundIDScoreJSONRequestBody) (*http.Request, error) {
+// NewSendScoreRequest calls the generic SendScore builder with application/json body
+func NewSendScoreRequest(server string, roundID string, body SendScoreJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPutRoundRoundIDScoreRequestWithBody(server, roundID, "application/json", bodyReader)
+	return NewSendScoreRequestWithBody(server, roundID, "application/json", bodyReader)
 }
 
-// NewPutRoundRoundIDScoreRequestWithBody generates requests for PutRoundRoundIDScore with any type of body
-func NewPutRoundRoundIDScoreRequestWithBody(server string, roundID string, contentType string, body io.Reader) (*http.Request, error) {
+// NewSendScoreRequestWithBody generates requests for SendScore with any type of body
+func NewSendScoreRequestWithBody(server string, roundID string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -461,18 +461,18 @@ type ClientWithResponsesInterface interface {
 	// GetLatestRoundIDWithResponse request
 	GetLatestRoundIDWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLatestRoundIDResponse, error)
 
-	// PostRoundWithBodyWithResponse request with any body
-	PostRoundWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostRoundResponse, error)
+	// CreateRoundWithBodyWithResponse request with any body
+	CreateRoundWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRoundResponse, error)
 
-	PostRoundWithResponse(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*PostRoundResponse, error)
+	CreateRoundWithResponse(ctx context.Context, body CreateRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateRoundResponse, error)
 
-	// GetRoundRoundIDWithResponse request
-	GetRoundRoundIDWithResponse(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*GetRoundRoundIDResponse, error)
+	// GetRoundWithResponse request
+	GetRoundWithResponse(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*GetRoundResponse, error)
 
-	// PutRoundRoundIDScoreWithBodyWithResponse request with any body
-	PutRoundRoundIDScoreWithBodyWithResponse(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutRoundRoundIDScoreResponse, error)
+	// SendScoreWithBodyWithResponse request with any body
+	SendScoreWithBodyWithResponse(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SendScoreResponse, error)
 
-	PutRoundRoundIDScoreWithResponse(ctx context.Context, roundID string, body PutRoundRoundIDScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*PutRoundRoundIDScoreResponse, error)
+	SendScoreWithResponse(ctx context.Context, roundID string, body SendScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*SendScoreResponse, error)
 }
 
 type GetLatestRoundIDResponse struct {
@@ -497,14 +497,14 @@ func (r GetLatestRoundIDResponse) StatusCode() int {
 	return 0
 }
 
-type PostRoundResponse struct {
+type CreateRoundResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *CreatedRound
 }
 
 // Status returns HTTPResponse.Status
-func (r PostRoundResponse) Status() string {
+func (r CreateRoundResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -512,21 +512,21 @@ func (r PostRoundResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PostRoundResponse) StatusCode() int {
+func (r CreateRoundResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetRoundRoundIDResponse struct {
+type GetRoundResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Round
 }
 
 // Status returns HTTPResponse.Status
-func (r GetRoundRoundIDResponse) Status() string {
+func (r GetRoundResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -534,20 +534,20 @@ func (r GetRoundRoundIDResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetRoundRoundIDResponse) StatusCode() int {
+func (r GetRoundResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type PutRoundRoundIDScoreResponse struct {
+type SendScoreResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r PutRoundRoundIDScoreResponse) Status() string {
+func (r SendScoreResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -555,7 +555,7 @@ func (r PutRoundRoundIDScoreResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PutRoundRoundIDScoreResponse) StatusCode() int {
+func (r SendScoreResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -571,47 +571,47 @@ func (c *ClientWithResponses) GetLatestRoundIDWithResponse(ctx context.Context, 
 	return ParseGetLatestRoundIDResponse(rsp)
 }
 
-// PostRoundWithBodyWithResponse request with arbitrary body returning *PostRoundResponse
-func (c *ClientWithResponses) PostRoundWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostRoundResponse, error) {
-	rsp, err := c.PostRoundWithBody(ctx, contentType, body, reqEditors...)
+// CreateRoundWithBodyWithResponse request with arbitrary body returning *CreateRoundResponse
+func (c *ClientWithResponses) CreateRoundWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRoundResponse, error) {
+	rsp, err := c.CreateRoundWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostRoundResponse(rsp)
+	return ParseCreateRoundResponse(rsp)
 }
 
-func (c *ClientWithResponses) PostRoundWithResponse(ctx context.Context, body PostRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*PostRoundResponse, error) {
-	rsp, err := c.PostRound(ctx, body, reqEditors...)
+func (c *ClientWithResponses) CreateRoundWithResponse(ctx context.Context, body CreateRoundJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateRoundResponse, error) {
+	rsp, err := c.CreateRound(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostRoundResponse(rsp)
+	return ParseCreateRoundResponse(rsp)
 }
 
-// GetRoundRoundIDWithResponse request returning *GetRoundRoundIDResponse
-func (c *ClientWithResponses) GetRoundRoundIDWithResponse(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*GetRoundRoundIDResponse, error) {
-	rsp, err := c.GetRoundRoundID(ctx, roundID, reqEditors...)
+// GetRoundWithResponse request returning *GetRoundResponse
+func (c *ClientWithResponses) GetRoundWithResponse(ctx context.Context, roundID string, reqEditors ...RequestEditorFn) (*GetRoundResponse, error) {
+	rsp, err := c.GetRound(ctx, roundID, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetRoundRoundIDResponse(rsp)
+	return ParseGetRoundResponse(rsp)
 }
 
-// PutRoundRoundIDScoreWithBodyWithResponse request with arbitrary body returning *PutRoundRoundIDScoreResponse
-func (c *ClientWithResponses) PutRoundRoundIDScoreWithBodyWithResponse(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutRoundRoundIDScoreResponse, error) {
-	rsp, err := c.PutRoundRoundIDScoreWithBody(ctx, roundID, contentType, body, reqEditors...)
+// SendScoreWithBodyWithResponse request with arbitrary body returning *SendScoreResponse
+func (c *ClientWithResponses) SendScoreWithBodyWithResponse(ctx context.Context, roundID string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SendScoreResponse, error) {
+	rsp, err := c.SendScoreWithBody(ctx, roundID, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePutRoundRoundIDScoreResponse(rsp)
+	return ParseSendScoreResponse(rsp)
 }
 
-func (c *ClientWithResponses) PutRoundRoundIDScoreWithResponse(ctx context.Context, roundID string, body PutRoundRoundIDScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*PutRoundRoundIDScoreResponse, error) {
-	rsp, err := c.PutRoundRoundIDScore(ctx, roundID, body, reqEditors...)
+func (c *ClientWithResponses) SendScoreWithResponse(ctx context.Context, roundID string, body SendScoreJSONRequestBody, reqEditors ...RequestEditorFn) (*SendScoreResponse, error) {
+	rsp, err := c.SendScore(ctx, roundID, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePutRoundRoundIDScoreResponse(rsp)
+	return ParseSendScoreResponse(rsp)
 }
 
 // ParseGetLatestRoundIDResponse parses an HTTP response from a GetLatestRoundIDWithResponse call
@@ -640,15 +640,15 @@ func ParseGetLatestRoundIDResponse(rsp *http.Response) (*GetLatestRoundIDRespons
 	return response, nil
 }
 
-// ParsePostRoundResponse parses an HTTP response from a PostRoundWithResponse call
-func ParsePostRoundResponse(rsp *http.Response) (*PostRoundResponse, error) {
+// ParseCreateRoundResponse parses an HTTP response from a CreateRoundWithResponse call
+func ParseCreateRoundResponse(rsp *http.Response) (*CreateRoundResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PostRoundResponse{
+	response := &CreateRoundResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -666,15 +666,15 @@ func ParsePostRoundResponse(rsp *http.Response) (*PostRoundResponse, error) {
 	return response, nil
 }
 
-// ParseGetRoundRoundIDResponse parses an HTTP response from a GetRoundRoundIDWithResponse call
-func ParseGetRoundRoundIDResponse(rsp *http.Response) (*GetRoundRoundIDResponse, error) {
+// ParseGetRoundResponse parses an HTTP response from a GetRoundWithResponse call
+func ParseGetRoundResponse(rsp *http.Response) (*GetRoundResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetRoundRoundIDResponse{
+	response := &GetRoundResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -692,15 +692,15 @@ func ParseGetRoundRoundIDResponse(rsp *http.Response) (*GetRoundRoundIDResponse,
 	return response, nil
 }
 
-// ParsePutRoundRoundIDScoreResponse parses an HTTP response from a PutRoundRoundIDScoreWithResponse call
-func ParsePutRoundRoundIDScoreResponse(rsp *http.Response) (*PutRoundRoundIDScoreResponse, error) {
+// ParseSendScoreResponse parses an HTTP response from a SendScoreWithResponse call
+func ParseSendScoreResponse(rsp *http.Response) (*SendScoreResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PutRoundRoundIDScoreResponse{
+	response := &SendScoreResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -710,18 +710,18 @@ func ParsePutRoundRoundIDScoreResponse(rsp *http.Response) (*PutRoundRoundIDScor
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-
+	// Gets the latest round ID
 	// (GET /latest/roundID)
 	GetLatestRoundID(ctx echo.Context) error
-
+	// Creates a new round
 	// (POST /round)
-	PostRound(ctx echo.Context) error
-
+	CreateRound(ctx echo.Context) error
+	// Gets round information
 	// (GET /round/{roundID})
-	GetRoundRoundID(ctx echo.Context, roundID string) error
-
+	GetRound(ctx echo.Context, roundID string) error
+	// Send a score event
 	// (PUT /round/{roundID}/score)
-	PutRoundRoundIDScore(ctx echo.Context, roundID string) error
+	SendScore(ctx echo.Context, roundID string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -738,17 +738,17 @@ func (w *ServerInterfaceWrapper) GetLatestRoundID(ctx echo.Context) error {
 	return err
 }
 
-// PostRound converts echo context to params.
-func (w *ServerInterfaceWrapper) PostRound(ctx echo.Context) error {
+// CreateRound converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateRound(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostRound(ctx)
+	err = w.Handler.CreateRound(ctx)
 	return err
 }
 
-// GetRoundRoundID converts echo context to params.
-func (w *ServerInterfaceWrapper) GetRoundRoundID(ctx echo.Context) error {
+// GetRound converts echo context to params.
+func (w *ServerInterfaceWrapper) GetRound(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "roundID" -------------
 	var roundID string
@@ -759,12 +759,12 @@ func (w *ServerInterfaceWrapper) GetRoundRoundID(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetRoundRoundID(ctx, roundID)
+	err = w.Handler.GetRound(ctx, roundID)
 	return err
 }
 
-// PutRoundRoundIDScore converts echo context to params.
-func (w *ServerInterfaceWrapper) PutRoundRoundIDScore(ctx echo.Context) error {
+// SendScore converts echo context to params.
+func (w *ServerInterfaceWrapper) SendScore(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "roundID" -------------
 	var roundID string
@@ -775,7 +775,7 @@ func (w *ServerInterfaceWrapper) PutRoundRoundIDScore(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PutRoundRoundIDScore(ctx, roundID)
+	err = w.Handler.SendScore(ctx, roundID)
 	return err
 }
 
@@ -808,43 +808,45 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.GET(baseURL+"/latest/roundID", wrapper.GetLatestRoundID)
-	router.POST(baseURL+"/round", wrapper.PostRound)
-	router.GET(baseURL+"/round/:roundID", wrapper.GetRoundRoundID)
-	router.PUT(baseURL+"/round/:roundID/score", wrapper.PutRoundRoundIDScore)
+	router.POST(baseURL+"/round", wrapper.CreateRound)
+	router.GET(baseURL+"/round/:roundID", wrapper.GetRound)
+	router.PUT(baseURL+"/round/:roundID/score", wrapper.SendScore)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"vwIAAP//dCY3qakaAAA=",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

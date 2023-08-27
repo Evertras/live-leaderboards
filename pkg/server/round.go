@@ -16,8 +16,8 @@ type RoundRepo interface {
 	GetLatestRoundID(ctx context.Context) (string, error)
 }
 
-func (s *Server) PostRound(ctx echo.Context) error {
-	ctx.Logger().Info("PostRound")
+func (s *Server) CreateRound(ctx echo.Context) error {
+	ctx.Logger().Info("CreateRound")
 
 	r := api.RoundRequest{}
 
@@ -51,9 +51,9 @@ func (s *Server) PostRound(ctx echo.Context) error {
 	return nil
 }
 
-func (s *Server) GetRoundRoundID(ctx echo.Context, roundID string) error {
+func (s *Server) GetRound(ctx echo.Context, roundID string) error {
 	logger := ctx.Logger()
-	logger.Infof("GetRoundRoundID: %s", roundID)
+	logger.Infof("GetRound: %s", roundID)
 
 	id, err := uuid.Parse(roundID)
 
@@ -100,9 +100,9 @@ func (s *Server) GetLatestRoundID(ctx echo.Context) error {
 	return nil
 }
 
-func (s *Server) PutRoundRoundIDScore(ctx echo.Context, roundID string) error {
+func (s *Server) SendScore(ctx echo.Context, roundID string) error {
 	logger := ctx.Logger()
-	logger.Infof("PutRoundRoundIDScore: %s", roundID)
+	logger.Infof("SendScore: %s", roundID)
 
 	id, err := uuid.Parse(roundID)
 
