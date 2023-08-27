@@ -23,9 +23,6 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
       for (const score of p.scores) {
         holeScores[score.hole - 1] = score.score;
       }
-    } else {
-      // Testing
-      holeScores[0] = p.name.length;
     }
 
     return {
