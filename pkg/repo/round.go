@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/Evertras/live-leaderboards/pkg/api"
 
@@ -129,14 +130,14 @@ func (r *Repo) getRoundData(ctx context.Context, roundID uuid.UUID) (*EventRound
 			return nil, nil, fmt.Errorf("failed to unmarshal key data: %w", err)
 		}
 
-		switch keyData.SK {
-		case sortKeyEventRoundStart:
+		switch {
+		case keyData.SK == sortKeyEventRoundStart:
 			err = attributevalue.UnmarshalMap(item, &eventStart)
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal start event: %w", err)
 			}
 
-		case sortKeyEventScore:
+		case strings.HasPrefix(keyData.SK, sortKeyEventScore):
 			var eventScore EventScore
 			err = attributevalue.UnmarshalMap(item, &eventScore)
 			if err != nil {

@@ -45,7 +45,7 @@ Hole data includes:
 Score events consist of the following fields as their composite primary key:
 
 - Round ID (Partition key)
-- `sc^[hole]^[player_index]` (Sort key)
+- `sc^[player_index]^[hole]` (Sort key)
 
 It also contains:
 

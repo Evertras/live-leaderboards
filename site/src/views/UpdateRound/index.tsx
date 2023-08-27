@@ -1,10 +1,11 @@
-import React from "react";
-import { useLoaderData } from "react-router-dom";
+import React, { useState } from "react";
+import { useLoaderData, useRevalidator } from "react-router-dom";
 
-import { getRoundByID } from "../../lib/client";
+import { getRoundByID, submitScore } from "../../lib/client";
 
 import { Round } from "../../lib/api";
 import Scorecard from "../../components/Scorecard";
+import AddScore from "../../components/AddScore";
 
 export async function loadRound({ params }: any) {
   const { id } = params;
@@ -15,10 +16,50 @@ export async function loadRound({ params }: any) {
 const UpdateRound = () => {
   const round = useLoaderData() as Round;
 
+  const [selected, setSelected] = useState({ hole: 1, playerIndex: 0 });
+
+  const selectedPlayerName = round.players[selected.playerIndex].name;
+
+  const revalidator = useRevalidator();
+
+  const onSubmitScore = async (
+    playerIndex: number,
+    hole: number,
+    score: number,
+  ) => {
+    const playerScores: any[] | null = round.players[playerIndex].scores;
+
+    if (
+      playerScores &&
+      playerScores.some((s: any) => s.hole === hole && s.score === score)
+    ) {
+      console.log("Score didn't change, ignoring");
+      return;
+    }
+
+    await submitScore(round.id, playerIndex, hole, score);
+
+    revalidator.revalidate();
+  };
+
   return (
     <React.Fragment>
       <h1>{round.title ? round.title : round.course.name}</h1>
-      <Scorecard round={round} />
+
+      <Scorecard
+        round={round}
+        onSelect={(playerIndex, holeNumber) =>
+          setSelected({ hole: holeNumber, playerIndex: playerIndex })
+        }
+      />
+
+      <AddScore
+        playerName={selectedPlayerName}
+        playerIndex={selected.playerIndex}
+        hole={selected.hole}
+        par={round.course.holes[selected.hole - 1].par}
+        onSubmit={onSubmitScore}
+      />
     </React.Fragment>
   );
 };
