@@ -1,7 +1,10 @@
 .PHONY: build
-build: node_modules
+build: node_modules ./src/lib/api
 	rm -rf build
 	npm run build
+
+./src/lib/client/api.d.ts: node_modules ../specs/openapi.yaml
+	npx openapi-typescript ../specs/openapi.yaml -o ./src/lib/client/api.d.ts
 
 node_modules: package.json package-lock.json
 	npm install
