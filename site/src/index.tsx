@@ -8,12 +8,20 @@ import App from "./App";
 import CreateRound, { createAction } from "./views/CreateRound";
 import ViewRound, { loadRound } from "./views/ViewRound";
 import UpdateRound from "./views/UpdateRound";
+import RedirectToLatest, {
+  redirectLatestAction,
+} from "./views/RedirectToLatest";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      {
+        path: "/",
+        element: <RedirectToLatest />,
+        action: redirectLatestAction,
+      },
       {
         path: "/create",
         element: <CreateRound />,

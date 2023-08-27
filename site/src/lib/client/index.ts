@@ -24,6 +24,12 @@ export async function createRound(request: RoundRequest): Promise<string> {
   return roundAPI.roundPost({ roundRequest: request }).then((res) => res.id);
 }
 
+export async function getLatestRoundID(): Promise<string> {
+  const id: string = await roundAPI.latestRoundIDGet();
+
+  return id;
+}
+
 export async function submitScore(
   roundID: string,
   playerIndex: number,
