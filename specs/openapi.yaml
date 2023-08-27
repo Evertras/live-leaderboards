@@ -3,7 +3,11 @@ openapi: 3.1.0
 info:
   title: Live Leaderboards
   summary: Send scores and see live updates of your friends playing golf.
-  version: 0.1.0
+  version: 0.2.0
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+    identifier: GPL-3.0-only
   contact:
     name: Evertras
     url: https://github.com/Evertras/live-leaderboards
@@ -12,12 +16,17 @@ servers:
   - url: http://localhost:8417
     description: Local server
 
+# TODO: security :D
+security: []
+
 paths:
   /round:
     post:
       tags:
         - round
-      description: Creates a new round
+      summary: Creates a new round
+      description: Creates a new round and returns the generated ID so it can be viewed/updated.
+      operationId: createRound
       requestBody:
         description: Round information
         content:
@@ -43,7 +52,9 @@ paths:
     get:
       tags:
         - round
-      description: Gets the latest round ID
+      summary: Gets the latest round ID
+      description: Gets the round ID of the most recently created round
+      operationId: getLatestRoundID
       responses:
         "200":
           description: Round ID retrieved successfully
@@ -55,7 +66,9 @@ paths:
     get:
       tags:
         - round
-      description: Gets current round information
+      summary: Gets round information
+      description: Gets current round information including players and latest scores
+      operationId: getRound
       parameters:
         - name: roundID
           in: path
@@ -67,16 +80,15 @@ paths:
           description: Round retrieved successfully
           content:
             application/json:
-              examples:
-                success:
-                  summary: "Success"
               schema:
                 $ref: "#/components/schemas/Round"
   /round/{roundID}/score:
     put:
       tags:
         - round
-      description: Send a score event
+      summary: Send a score event
+      description: Send a score event, overwriting an older score event if it exists
+      operationId: sendScore
       parameters:
         - name: roundID
           in: path
@@ -107,75 +119,75 @@ components:
           holes:
             - hole: 1
               par: 4
-              distance: 337
+              distanceYards: 337
               strokeIndex: 6
             - hole: 2
               par: 5
-              distance: 458
+              distanceYards: 458
               strokeIndex: 10
             - hole: 3
               par: 4
-              distance: 340
+              distanceYards: 340
               strokeIndex: 12
             - hole: 4
               par: 4
-              distance: 290
+              distanceYards: 290
               strokeIndex: 16
             - hole: 5
               par: 3
-              distance: 134
+              distanceYards: 134
               strokeIndex: 14
             - hole: 6
               par: 5
-              distance: 465
+              distanceYards: 465
               strokeIndex: 2
             - hole: 7
               par: 3
-              distance: 94
+              distanceYards: 94
               strokeIndex: 18
             - hole: 8
               par: 4
-              distance: 364
+              distanceYards: 364
               strokeIndex: 4
             - hole: 9
               par: 4
-              distance: 436
+              distanceYards: 436
               strokeIndex: 8
             - hole: 10
               par: 4
-              distance: 408
+              distanceYards: 408
               strokeIndex: 3
             - hole: 11
               par: 4
-              distance: 338
+              distanceYards: 338
               strokeIndex: 9
             - hole: 12
               par: 3
-              distance: 176
+              distanceYards: 176
               strokeIndex: 17
             - hole: 13
               par: 4
-              distance: 370
+              distanceYards: 370
               strokeIndex: 7
             - hole: 14
               par: 5
-              distance: 490
+              distanceYards: 490
               strokeIndex: 1
             - hole: 15
               par: 4
-              distance: 338
+              distanceYards: 338
               strokeIndex: 13
             - hole: 16
               par: 4
-              distance: 368
+              distanceYards: 368
               strokeIndex: 11
             - hole: 17
               par: 4
-              distance: 166
+              distanceYards: 166
               strokeIndex: 15
             - hole: 18
               par: 5
-              distance: 506
+              distanceYards: 506
               strokeIndex: 5
         players:
           - name: Evertras

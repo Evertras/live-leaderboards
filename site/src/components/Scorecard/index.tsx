@@ -1,5 +1,5 @@
 import React from "react";
-import { Round } from "../../lib/api/models";
+import { Round } from "../../lib/client";
 
 import styles from "./Scorecard.module.css";
 
@@ -17,7 +17,7 @@ interface PlayerData {
 
 const Scorecard = ({ round, onSelect }: ScorecardProps) => {
   const playerData = round.players.map((p: PlayerData) => {
-    const holeScores = round.course.holes.map(() => null);
+    const holeScores = round.course.holes.map((): number | null => null);
 
     if (p.scores) {
       for (const score of p.scores) {

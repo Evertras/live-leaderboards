@@ -35,29 +35,41 @@ func (t *testContext) iCreateANewRoundWithPlayers(numPlayers int) error {
 		Title:   ptr("Test Round"),
 	}
 
-	createdRound, err := t.client.CreateRound(t.execCtx, *t.roundRequest)
+	response, err := t.client.CreateRound(t.execCtx, *t.roundRequest)
 
 	if err != nil {
 		return fmt.Errorf("failed to create round: %w", err)
 	}
 
-	if createdRound.Id.String() == "" {
+	createdRound, err := api.ParseCreateRoundResponse(response)
+
+	if err != nil {
+		return fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	if createdRound.JSON201.Id.String() == "" {
 		return fmt.Errorf("id was empty")
 	}
 
-	t.createdRoundID = createdRound.Id
+	t.createdRoundID = createdRound.JSON201.Id
 
 	return nil
 }
 
 func (t *testContext) iViewTheRound() error {
-	round, err := t.client.GetRound(t.execCtx, t.createdRoundID)
+	response, err := t.client.GetRound(t.execCtx, t.createdRoundID.String())
 
 	if err != nil {
 		return fmt.Errorf("failed to get round: %w", err)
 	}
 
-	t.returnedRound = round
+	round, err := api.ParseGetRoundResponse(response)
+
+	if err != nil {
+		return fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	t.returnedRound = round.JSON200
 
 	return nil
 }
@@ -95,7 +107,7 @@ func (t *testContext) playerScoresOnHole(playerIndex, score, hole int) error {
 		Score:       score,
 	}
 
-	res, err := t.client.PutRoundRoundIDScore(t.execCtx, t.createdRoundID.String(), scoreEvent)
+	res, err := t.client.SendScore(t.execCtx, t.createdRoundID.String(), scoreEvent)
 
 	if err != nil {
 		return fmt.Errorf("failed to send score: %w", err)

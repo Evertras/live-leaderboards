@@ -1,33 +1,56 @@
-import {
-  Configuration,
-  Round,
-  RoundApi,
-  RoundRequest,
-  RoundRoundIDScorePutRequest,
-} from "../api";
+import createClient from "openapi-fetch";
+import { components, paths } from "./api";
 
-const configuration = new Configuration({
-  basePath:
+const { GET, POST, PUT } = createClient<paths>({
+  baseUrl:
     process.env.REACT_APP_EVERTRAS_API_BASE_PATH ||
     "https://leaderboard-api.evertras.com",
 });
 
-const roundAPI = new RoundApi(configuration);
+export type Course = components["schemas"]["Course"];
+export type Round = components["schemas"]["Round"];
+export type RoundID = components["schemas"]["RoundID"];
+export type RoundRequest = components["schemas"]["RoundRequest"];
+export type CreatedRound = components["schemas"]["CreatedRound"];
 
-export function getRoundByID(id: string): Promise<Round> {
-  return roundAPI.roundRoundIDGet({
-    roundID: id,
+export async function getRoundByID(id: string): Promise<Round> {
+  const { data, error } = await GET("/round/{roundID}", {
+    params: {
+      path: {
+        roundID: id,
+      },
+    },
   });
+
+  if (data) {
+    return data;
+  }
+
+  throw error;
 }
 
-export async function createRound(request: RoundRequest): Promise<string> {
-  return roundAPI.roundPost({ roundRequest: request }).then((res) => res.id);
+export async function createRound(
+  request: RoundRequest,
+): Promise<CreatedRound> {
+  const { data, error } = await POST("/round", {
+    body: request,
+  });
+
+  if (data) {
+    return data;
+  }
+
+  throw error;
 }
 
-export async function getLatestRoundID(): Promise<string> {
-  const id: string = await roundAPI.latestRoundIDGet();
+export async function getLatestRoundID(): Promise<RoundID> {
+  const { data, error } = await GET("/latest/roundID", {});
 
-  return id;
+  if (data) {
+    return data;
+  }
+
+  throw error;
 }
 
 export async function submitScore(
@@ -36,16 +59,20 @@ export async function submitScore(
   hole: number,
   score: number,
 ): Promise<void> {
-  const reqParams: RoundRoundIDScorePutRequest = {
-    roundID: roundID,
+  const { error } = await PUT("/round/{roundID}/score", {
+    params: {
+      path: {
+        roundID: roundID,
+      },
+    },
     body: {
       playerIndex,
       hole,
       score,
     },
-  };
+  });
 
-  return roundAPI.roundRoundIDScorePut(reqParams);
+  if (error) {
+    throw error;
+  }
 }
-
-export { roundAPI };
