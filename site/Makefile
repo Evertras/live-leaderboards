@@ -4,7 +4,11 @@ build: node_modules ./src/lib/client/api.d.ts
 	npm run build
 
 .PHONY: generated
-generated: ./src/lib/client/api.d.ts
+generated: node_modules ./src/lib/client/api.d.ts
+
+.PHONY: clean
+clean:
+	rm -rf node_modules
 
 ./src/lib/client/api.d.ts: node_modules ../specs/openapi.yaml
 	npx openapi-typescript ../specs/openapi.yaml -o ./src/lib/client/api.d.ts

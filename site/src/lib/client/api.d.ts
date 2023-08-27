@@ -3,6 +3,7 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/round": {
     /**
@@ -95,6 +96,7 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
+
   /**
    * Creates a new round
    * @description Creates a new round and returns the generated ID so it can be viewed/updated.
