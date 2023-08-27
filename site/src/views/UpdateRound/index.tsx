@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useRevalidator } from "react-router-dom";
 
 import { getRoundByID, submitScore } from "../../lib/client";
 
@@ -20,7 +20,13 @@ const UpdateRound = () => {
 
   const selectedPlayerName = round.players[selected.playerIndex].name;
 
-  const onSubmitScore = (playerIndex: number, hole: number, score: number) => {
+  const revalidator = useRevalidator();
+
+  const onSubmitScore = async (
+    playerIndex: number,
+    hole: number,
+    score: number,
+  ) => {
     const playerScores: any[] | null = round.players[playerIndex].scores;
 
     if (
@@ -31,7 +37,9 @@ const UpdateRound = () => {
       return;
     }
 
-    submitScore(round.id, playerIndex, hole, score);
+    await submitScore(round.id, playerIndex, hole, score);
+
+    revalidator.revalidate();
   };
 
   return (
