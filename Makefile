@@ -35,7 +35,7 @@ generated: ./pkg/api/api.go diagrams node_modules
 GO_FILES=$(shell find . -iname *.go)
 bin/leaderboard-api-lambda: $(GO_FILES) go.mod go.sum
 	@mkdir -p bin
-	GOARCH=amd64 GOOS=linux go build -o bin/leaderboard-api-lambda -ldflags="-s -w" ./cmd/lambda
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o bin/leaderboard-api-lambda -ldflags="-s -w" ./cmd/lambda
 
 bin/leaderboard-api-lambda.zip: bin/leaderboard-api-lambda
 	cd bin && zip leaderboard-api-lambda.zip leaderboard-api-lambda
