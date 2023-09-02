@@ -4,6 +4,7 @@ import {
   calcCurrentMatchplayWinner,
   getHoleWinnerPlayerIndex,
 } from "../../lib/winner";
+import ScoreNumber from "../ScoreNumber";
 
 import styles from "./Scorecard.module.css";
 
@@ -86,7 +87,10 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
                     className={holeWinners[h] === i ? styles.winner : ""}
                     onClick={() => onClick(i, h + 1)}
                   >
-                    {s}
+                    <ScoreNumber
+                      total={s ?? 0}
+                      par={round.course.holes[h].par}
+                    />
                   </td>
                 ))}
               </tr>
