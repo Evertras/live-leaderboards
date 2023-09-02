@@ -18,7 +18,7 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = merge(
       {
-        "DEPLOY_ENVIRONMENT" = terraform.workspace == "default" ? "prod" : terraform.workspace,
+        "EVERTRAS_DEPLOY_ENVIRONMENT" = terraform.workspace == "default" ? "prod" : terraform.workspace,
       },
       var.environment_vars
     )
