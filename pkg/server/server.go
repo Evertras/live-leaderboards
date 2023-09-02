@@ -23,9 +23,6 @@ func New(r Repo) *Server {
 
 	e.Logger.SetLevel(log.INFO)
 
-	// TODO: update to pin to our hosts/headers
-	// https://echo.labstack.com/docs/middleware/cors#custom-configuration
-	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 
 	s := &Server{
