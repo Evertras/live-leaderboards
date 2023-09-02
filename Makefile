@@ -34,6 +34,7 @@ terraform-apply: bin/terraform ./bin/leaderboard-api-lambda
 dev-api: ./pkg/api/api.go
 	cd tests && docker-compose up --build
 
+.PHONY: dev-site
 dev-site:
 	$(MAKE) -C site dev-run
 
