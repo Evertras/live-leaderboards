@@ -3,6 +3,14 @@ default: .git/hooks/pre-commit generated bin/terraform
 	$(MAKE) -C site generated
 	@echo Ready!
 
+.PHONY: clean
+clean:
+	rm -rf node_modules
+	$(MAKE) -C site clean
+
+################################################################################
+# Builds for deployment
+
 .PHONY: build
 build: build-api build-site
 
@@ -13,18 +21,22 @@ build-api: bin/leaderboard-api-lambda
 build-site:
 	$(MAKE) -C site build
 
-.PHONY: validate-schema
-validate-schema: node_modules
-	npx @redocly/cli lint ./specs/openapi.yaml
-
 .PHONY: terraform-apply
 terraform-apply: bin/terraform ./bin/leaderboard-api-lambda
 	cd terraform && ../bin/terraform apply
 
-.PHONY: clean
-clean:
-	rm -rf node_modules
-	$(MAKE) -C site clean
+################################################################################
+# Run things locally
+
+# This will build everything up to date automatically when run, so don't need
+# to add any other dependencies to the Makefile
+.PHONY: dev-api
+dev-api: ./pkg/api/api.go
+	cd tests && docker-compose up --build
+
+.PHONY: dev-site
+dev-site:
+	$(MAKE) -C site dev-run
 
 ################################################################################
 # Generated stuff
@@ -69,9 +81,9 @@ test: ./pkg/api/api.go
 test-integration: ./pkg/api/api.go
 	go test -v -race ./tests
 
-.PHONY: docker-compose-up
-docker-compose-up: ./pkg/api/api.go
-	cd tests && docker-compose up --build
+.PHONY: validate-schema
+validate-schema: node_modules
+	npx @redocly/cli lint ./specs/openapi.yaml
 
 ################################################################################
 # Formatting

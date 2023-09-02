@@ -11,7 +11,6 @@ COPY cmd/ cmd/
 COPY pkg/ pkg/
 RUN CGO_ENABLED=0 go build \
       -o /server \
-      -ldflags="-X github.com/evertras/cynomys/cmd/cyn/cmds.BuildVersion=$BUILD_VERSION" \
       ./cmd/server/*.go
 
 # We want to access some basic shell tools for debugging, but we want to be
