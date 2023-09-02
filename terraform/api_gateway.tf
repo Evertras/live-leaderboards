@@ -1,6 +1,15 @@
 resource "aws_apigatewayv2_api" "api" {
   name          = local.prefix
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = [
+      // TODO: Automatically switch to dev, etc
+      "https://leaderboard.evertras.com"
+    ]
+    allow_methods = ["*"]
+    allow_headers = ["*"]
+  }
 }
 
 resource "aws_apigatewayv2_stage" "prod" {
