@@ -1,7 +1,11 @@
 .PHONY: build
-build: node_modules ./src/lib/client/api.d.ts
+build: generated
 	rm -rf build
 	npm run build
+
+.PHONY: dev-run
+dev-run: generated
+	npm start
 
 .PHONY: generated
 generated: node_modules ./src/lib/client/api.d.ts
