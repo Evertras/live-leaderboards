@@ -25,6 +25,10 @@ func New(r Repo) *Server {
 
 	e.Use(middleware.Logger())
 
+	// CORS is handled mostly through API Gateway layer, we don't need to
+	// worry about it... we just need to accept whatever we're given
+	e.Use(middleware.CORS())
+
 	s := &Server{
 		e: e,
 		r: r,
