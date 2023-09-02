@@ -8,7 +8,7 @@ on:
     types: [released]
 
 jobs:
-  deploy-prod:
+  deploy-site:
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -42,7 +42,29 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_SITE_PROD_SYNC_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SITE_PROD_SYNC_KEY_SECRET }}
           aws-region: ap-northeast-1
-      - name: Deploy
+      - name: Deploy site
         run: |
           cd site/build
           aws s3 sync --delete . s3://leaderboard.evertras.com
+  deploy-api:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v3
+      - name: Determine build version
+        run: |
+          echo "${GITHUB_REF} -> ${GITHUB_REF##*/}"
+          echo "REACT_APP_BUILD_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      - name: Build zip
+        run: make bin/leaderboard-api-lambda.zip
+      - name: Set AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_API_PROD_UPDATE_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_API_PROD_UPDATE_KEY_SECRET }}
+          aws-region: ap-northeast-1
+      - name: Deploy API
+        run: |
+          aws lambda update-function-code \
+            --function-name evertras-leaderboards-api \
+            --zip-file fileb://bin/leaderboard-api-lambda.zip

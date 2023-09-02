@@ -37,6 +37,9 @@ bin/leaderboard-api-lambda: $(GO_FILES) go.mod go.sum
 	@mkdir -p bin
 	GOARCH=amd64 GOOS=linux go build -o bin/leaderboard-api-lambda -ldflags="-s -w" ./cmd/lambda
 
+bin/leaderboard-api-lambda.zip: bin/leaderboard-api-lambda
+	cd bin && zip leaderboard-api-lambda.zip leaderboard-api-lambda
+
 ./pkg/api/api.go: specs/openapi.yaml bin/oapi-codegen
 	@mkdir -p pkg/api
 	./bin/oapi-codegen -package api specs/openapi.yaml > pkg/api/api.go

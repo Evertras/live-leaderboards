@@ -15,3 +15,12 @@ output "api_gw_id" {
 output "api_gw_stage" {
   value = aws_apigatewayv2_stage.prod.id
 }
+
+output "api_update_key" {
+  value = aws_iam_access_key.deploy_api.id
+}
+
+output "api_update_secret" {
+  value     = aws_iam_access_key.deploy_api.secret
+  sensitive = true
+}
