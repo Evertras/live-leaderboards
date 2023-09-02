@@ -15,6 +15,12 @@ resource "aws_lambda_function" "lambda" {
   runtime = "go1.x"
   handler = var.binary_name
 
+  lifecycle {
+    ignore_changes = [
+      source_code_hash
+    ]
+  }
+
   environment {
     variables = merge(
       {
