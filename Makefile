@@ -74,8 +74,13 @@ node_modules: package.json package-lock.json
 
 ################################################################################
 # Testing
+.PHONY: test
 test: ./pkg/api/api.go
 	go test -race ./pkg/...
+
+.PHONY: test-site
+test-site:
+	$(MAKE) -C site test
 
 .PHONY: test-integration
 test-integration: ./pkg/api/api.go

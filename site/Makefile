@@ -3,6 +3,10 @@ build: generated
 	rm -rf build
 	npm run build
 
+.PHONY: test
+test: generated
+	npm test
+
 .PHONY: dev-run
 dev-run: generated
 	npm start

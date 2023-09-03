@@ -44,7 +44,7 @@ jobs:
         run: make test
 
   site:
-    name: Build site
+    name: Build and test site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -71,3 +71,6 @@ jobs:
 
       - name: Build
         run: make build-site
+
+      - name: Test
+        run: make test-site
