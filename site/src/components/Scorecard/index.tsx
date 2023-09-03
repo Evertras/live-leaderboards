@@ -25,22 +25,26 @@ interface PlayerData {
 interface PlayerScoresForAllHoles {
   name: string;
   scores: (number | null)[];
+  total: number;
 }
 
 const Scorecard = ({ round, onSelect }: ScorecardProps) => {
-  const playerData: PlayerScoresForAllHoles[] = round.players.map(
+  const playerScoresForHoles: PlayerScoresForAllHoles[] = round.players.map(
     (p: PlayerData) => {
       const holeScores = round.course.holes.map((): number | null => null);
+      let total = 0;
 
       if (p.scores) {
         for (const score of p.scores) {
           holeScores[score.hole - 1] = score.score;
+          total += score.score;
         }
       }
 
       return {
         name: p.name,
         scores: holeScores,
+        total: total,
       };
     },
   );
@@ -56,28 +60,39 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
     }
   };
 
-  const playerScoreRows = playerData.map((p: any, i: number) => (
-    <tr key={i}>
-      <td
-        className={
-          currentMatchplayResult.currentWinnerPlayerIndex === i
-            ? styles.winner
-            : ""
-        }
-      >
-        {p.name}
-      </td>
-      {p.scores.map((s: number | null, h: number) => (
+  const playerScoreRows = playerScoresForHoles.map(
+    (p: PlayerScoresForAllHoles, i: number) => (
+      <tr key={i}>
         <td
-          key={h}
-          className={holeWinners[h] === i ? styles.winner : ""}
-          onClick={() => onClick(i, h + 1)}
+          className={
+            currentMatchplayResult.currentWinnerPlayerIndex === i
+              ? styles.winner
+              : ""
+          }
         >
-          <ScoreNumber total={s ?? 0} par={round.course.holes[h].par} />
+          {p.name}
         </td>
-      ))}
-    </tr>
-  ));
+        {p.scores.map((s: number | null, h: number) => (
+          <td
+            key={h}
+            className={holeWinners[h] === i ? styles.winner : ""}
+            onClick={() => onClick(i, h + 1)}
+          >
+            <ScoreNumber total={s ?? 0} par={round.course.holes[h].par} />
+          </td>
+        ))}
+        <td>{p.total}</td>
+      </tr>
+    ),
+  );
+
+  let totalYards = 0;
+  let totalPar = 0;
+
+  round.course.holes.forEach((h) => {
+    totalYards += h.distanceYards ?? 0;
+    totalPar += h.par;
+  });
 
   return (
     <React.Fragment>
@@ -89,18 +104,21 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
               {round.course.holes.map((_: any, i: number) => (
                 <th key={i}>{i + 1}</th>
               ))}
+              <th>TOT</th>
             </tr>
             <tr>
               <th>{round.course.tees}</th>
               {round.course.holes.map((h: any, i: number) => (
                 <th key={i}>{h.distanceYards}</th>
               ))}
+              <th>{totalYards}</th>
             </tr>
             <tr>
               <th>Par</th>
               {round.course.holes.map((h: any, i: number) => (
                 <th key={i}>{h.par}</th>
               ))}
+              <th>{totalPar}</th>
             </tr>
           </thead>
           <tbody>{playerScoreRows}</tbody>
