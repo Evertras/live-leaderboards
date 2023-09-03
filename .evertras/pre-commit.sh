@@ -1,4 +1,12 @@
 #!/bin/sh
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "main" ]; then
+  echo "No committing to main!"
+  exit 1
+fi
+
 # https://prettier.io/docs/en/precommit.html#option-6-shell-script
 FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
 [ -z "$FILES" ] && exit 0
