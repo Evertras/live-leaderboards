@@ -3,6 +3,8 @@ import { Round } from "../../lib/client";
 import {
   calcCurrentMatchplayWinner,
   getHoleWinnerPlayerIndex,
+  MatchplayNoWinnerResult,
+  MatchplayResult,
 } from "../../lib/winner";
 import ScoreNumber from "../ScoreNumber";
 
@@ -20,26 +22,33 @@ interface PlayerData {
   scores: { hole: number; score: number }[];
 }
 
+interface PlayerScoresForAllHoles {
+  name: string;
+  scores: (number | null)[];
+}
+
 const Scorecard = ({ round, onSelect }: ScorecardProps) => {
-  const playerData = round.players.map((p: PlayerData) => {
-    const holeScores = round.course.holes.map((): number | null => null);
+  const playerData: PlayerScoresForAllHoles[] = round.players.map(
+    (p: PlayerData) => {
+      const holeScores = round.course.holes.map((): number | null => null);
 
-    if (p.scores) {
-      for (const score of p.scores) {
-        holeScores[score.hole - 1] = score.score;
+      if (p.scores) {
+        for (const score of p.scores) {
+          holeScores[score.hole - 1] = score.score;
+        }
       }
-    }
 
-    return {
-      name: p.name,
-      scores: holeScores,
-    };
-  });
-
-  const currentMatchplayResult = calcCurrentMatchplayWinner(round);
-  const holeWinners = round.course.holes.map((h) =>
-    getHoleWinnerPlayerIndex(round, h.hole),
+      return {
+        name: p.name,
+        scores: holeScores,
+      };
+    },
   );
+
+  const currentMatchplayResult: MatchplayResult =
+    calcCurrentMatchplayWinner(round);
+  const holeWinners: (number | MatchplayNoWinnerResult)[] =
+    round.course.holes.map((h) => getHoleWinnerPlayerIndex(round, h.hole));
 
   const onClick = (playerIndex: number, hole: number) => {
     if (onSelect) {
