@@ -3,6 +3,14 @@ build: generated
 	rm -rf build
 	npm run build
 
+.PHONY: test
+test: generated
+	npm test
+
+.PHONY: test-ci
+test-ci: generated
+	export CI=true && npm test
+
 .PHONY: dev-run
 dev-run: generated
 	npm start
