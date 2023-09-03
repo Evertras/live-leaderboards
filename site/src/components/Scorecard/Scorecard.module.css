@@ -4,13 +4,17 @@
 }
 
 .Scorecard th {
-  border: 2px solid white;
+  border-width: 3px;
+  border-style: solid;
+  border-color: lightslategray;
   padding: 0.5em 0.2em;
   width: 3vw;
 }
 
 .Scorecard td {
-  border: 2px solid white;
+  border-width: 3px;
+  border-style: solid;
+  border-color: lightslategray;
   padding: 0.5em 0.2em;
 }
 
