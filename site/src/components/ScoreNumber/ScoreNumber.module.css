@@ -2,27 +2,32 @@
   margin: auto;
   width: 1.2em;
   height: 1.2em;
-  padding: 0.2em;
+  padding: 0.1em;
+  border-width: 0.15em;
 }
 
 .scoreEagle {
   font-weight: bold;
   color: pink;
-  border: 5px double pink;
+  border-color: pink;
   border-radius: 50%;
+  border-style: double;
 }
 
 .scoreBirdie {
   font-weight: bold;
   color: pink;
-  border: 5px solid pink;
+  border-color: pink;
+  border-style: solid;
   border-radius: 50%;
 }
 
 .scoreBogey {
-  border: 3px solid white;
+  border-style: solid;
+  border-color: white;
 }
 
 .scoreDoubleBogey {
-  border: 3px double white;
+  border-style: double;
+  border-color: white;
 }
