@@ -21,6 +21,10 @@ resource "aws_lambda_function" "lambda" {
     ]
   }
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = merge(
       {
@@ -78,4 +82,13 @@ EOF
 resource "aws_iam_role_policy_attachment" "attach_log_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.log_policy.arn
+}
+
+data "aws_iam_policy" "lambda_xray" {
+  name = "AWSXRayDaemonWriteAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "attach_xray_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = data.aws_iam_policy.lambda_xray.arn
 }
