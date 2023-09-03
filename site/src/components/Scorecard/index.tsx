@@ -36,7 +36,7 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
     };
   });
 
-  const winner = calcCurrentMatchplayWinner(round);
+  const currentMatchplayResult = calcCurrentMatchplayWinner(round);
   const holeWinners = round.course.holes.map((h) =>
     getHoleWinnerPlayerIndex(round, h.hole),
   );
@@ -46,6 +46,29 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
       onSelect(playerIndex, hole);
     }
   };
+
+  const playerScoreRows = playerData.map((p: any, i: number) => (
+    <tr key={i}>
+      <td
+        className={
+          currentMatchplayResult.currentWinnerPlayerIndex === i
+            ? styles.winner
+            : ""
+        }
+      >
+        {p.name}
+      </td>
+      {p.scores.map((s: number | null, h: number) => (
+        <td
+          key={h}
+          className={holeWinners[h] === i ? styles.winner : ""}
+          onClick={() => onClick(i, h + 1)}
+        >
+          <ScoreNumber total={s ?? 0} par={round.course.holes[h].par} />
+        </td>
+      ))}
+    </tr>
+  ));
 
   return (
     <React.Fragment>
@@ -71,31 +94,7 @@ const Scorecard = ({ round, onSelect }: ScorecardProps) => {
               ))}
             </tr>
           </thead>
-          <tbody>
-            {playerData.map((p: any, i: number) => (
-              <tr key={i}>
-                <td
-                  className={
-                    winner.currentWinnerPlayerIndex === i ? styles.winner : ""
-                  }
-                >
-                  {p.name}
-                </td>
-                {p.scores.map((s: number | null, h: number) => (
-                  <td
-                    key={h}
-                    className={holeWinners[h] === i ? styles.winner : ""}
-                    onClick={() => onClick(i, h + 1)}
-                  >
-                    <ScoreNumber
-                      total={s ?? 0}
-                      par={round.course.holes[h].par}
-                    />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+          <tbody>{playerScoreRows}</tbody>
         </table>
       </div>
     </React.Fragment>
