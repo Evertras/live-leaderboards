@@ -7,6 +7,10 @@ build: generated
 test: generated
 	npm test
 
+.PHONY: test-ci
+test-ci: generated
+	export CI=true && npm test
+
 .PHONY: dev-run
 dev-run: generated
 	npm start

@@ -78,9 +78,15 @@ node_modules: package.json package-lock.json
 test: ./pkg/api/api.go
 	go test -race ./pkg/...
 
+# Runs interactive test runner with watches
 .PHONY: test-site
 test-site:
 	$(MAKE) -C site test
+
+# Runs tests and exits
+.PHONY: test-site-ci
+test-site-ci:
+	$(MAKE) -C site test-ci
 
 .PHONY: test-integration
 test-integration: ./pkg/api/api.go
