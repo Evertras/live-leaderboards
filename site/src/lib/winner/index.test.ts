@@ -68,6 +68,16 @@ describe("matchplay 1v1 result calculations", () => {
         upBy: 0,
       },
     },
+    {
+      name: "all holes won by player B",
+      scoresA: [9, 3],
+      scoresB: [8, 2],
+      expectedResult: {
+        totalHolesWonByPlayerIndex: [0, 2],
+        currentWinnerPlayerIndex: 1,
+        upBy: 2,
+      },
+    },
   ];
 
   testCases.forEach((testCase) => {
