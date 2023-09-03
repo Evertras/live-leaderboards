@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-xray-sdk-go/instrumentation/awsv2"
 )
 
 type Repo struct {
@@ -19,6 +20,8 @@ func NewDefault(ctx context.Context, tableName string, opts ...func(o *dynamodb.
 	if err != nil {
 		return nil, fmt.Errorf("failed to load default config: %w", err)
 	}
+
+	awsv2.AWSV2Instrumentor(&cfg.APIOptions)
 
 	client := dynamodb.NewFromConfig(cfg, opts...)
 
