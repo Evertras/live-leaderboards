@@ -19,8 +19,16 @@ const ViewRound = () => {
   const revalidator = useRevalidator();
 
   useEffect(() => {
+    // Only poll for updates if the round is still going
+    const anyPlayerStillPlaying = round.players.some(
+      (p) => p.scores.length !== round.course.holes.length,
+    );
+    if (!anyPlayerStillPlaying) {
+      return;
+    }
+
     const minute = 60 * 1000;
-    let id = setInterval(() => revalidator.revalidate(), minute);
+    const id = setInterval(() => revalidator.revalidate(), minute);
     return () => clearInterval(id);
   }, [revalidator]);
 
