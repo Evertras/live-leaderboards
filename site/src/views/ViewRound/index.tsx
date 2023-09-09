@@ -30,7 +30,7 @@ const ViewRound = () => {
     const minute = 60 * 1000;
     const id = setInterval(() => revalidator.revalidate(), minute);
     return () => clearInterval(id);
-  }, [revalidator]);
+  }, [revalidator, round.players, round.course.holes]);
 
   return (
     <React.Fragment>
