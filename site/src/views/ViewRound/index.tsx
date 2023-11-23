@@ -21,7 +21,7 @@ const ViewRound = () => {
   useEffect(() => {
     // Only poll for updates if the round is still going
     const anyPlayerStillPlaying = round.players.some(
-      (p) => p.scores.length !== round.course.holes.length,
+      (p) => !p.scores || p.scores.length !== round.course.holes.length,
     );
     if (!anyPlayerStillPlaying) {
       return;
